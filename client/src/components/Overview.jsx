@@ -37,10 +37,10 @@ export default function Overview() {
         </svg>
         <div>
           <div className="text-xs text-slate-400 tracking-wider uppercase mb-1">Overall Progress</div>
-          {overall < 10 && <p className="text-blue-400 text-sm">Just started. Every day counts. Lock in.</p>}
-          {overall >= 10 && overall < 30 && <p className="text-blue-400 text-sm">Building momentum. Stay consistent.</p>}
-          {overall >= 30 && overall < 60 && <p className="text-blue-400 text-sm">Solid progress. Keep pushing.</p>}
-          {overall >= 60 && <p className="text-blue-400 text-sm">Beast mode. Don't stop now.</p>}
+          {overall < 10 && <p className="text-blue-400 text-sm mt-1">Just started. Every day counts. Lock in.</p>}
+          {overall >= 10 && overall < 30 && <p className="text-blue-400 text-sm mt-1">Building momentum. Stay consistent.</p>}
+          {overall >= 30 && overall < 60 && <p className="text-blue-400 text-sm mt-1">Solid progress. Keep pushing.</p>}
+          {overall >= 60 && <p className="text-blue-400 text-sm mt-1">Beast mode. Don't stop now.</p>}
         </div>
       </div>
 
@@ -52,7 +52,7 @@ export default function Overview() {
               m.urgent ? 'border-red-900/50' : 'border-[#1e3a5f]/60'
             }`}
           >
-            <div className="text-[10px] text-slate-400 tracking-wider uppercase mb-1">{m.label}</div>
+            <div className="text-[10px] text-slate-400 tracking-wider uppercase mb-2">{m.label}</div>
             <div className={`text-lg font-semibold ${m.urgent ? 'text-red-400' : 'text-slate-200'}`}>
               {m.value}
             </div>
@@ -66,7 +66,7 @@ export default function Overview() {
         <div className="h-2 bg-[#1e3a5f]/40 rounded-full overflow-hidden">
           <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${topGoal?.progress || 0}%` }} />
         </div>
-        <div className="text-[11px] text-slate-500 mt-1.5">{topGoal?.progress || 0}% complete</div>
+        <div className="text-[11px] text-slate-400 mt-2">{topGoal?.progress || 0}% complete</div>
       </div>
 
       {data.workouts.challenges.filter(c => c.active).length > 0 && (
