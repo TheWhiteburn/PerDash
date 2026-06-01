@@ -68,15 +68,24 @@ function rand(n) {
 }
 
 function buildWriters() {
-  return Array.from({ length: 35 }, (_, i) => {
-    const x = 3 + Math.random() * 94;
-    const y = 2 + Math.random() * 93;
+  const left = Array.from({ length: 12 }, (_, i) => ({
+    x: 3 + Math.random() * 13,
+    y: 4 + (i + 0.5) / 12 * 86 + (Math.random() - 0.5) * 2.5,
+    tilt: ((Math.random() - 0.5) * 30).toFixed(1),
+  }));
+  const right = Array.from({ length: 13 }, (_, i) => ({
+    x: 85 + Math.random() * 13,
+    y: 4 + (i + 0.5) / 13 * 86 + (Math.random() - 0.5) * 2.5,
+    tilt: ((Math.random() - 0.5) * 30).toFixed(1),
+  }));
 
+  return [...left, ...right].map((pos, i) => {
     const phrase = phrases[rand(phrases.length)];
     return {
       id: i,
-      x: x.toFixed(2), y: y.toFixed(2),
-      rotation: ((Math.random() - 0.5) * 30).toFixed(1),
+      x: pos.x.toFixed(2),
+      y: pos.y.toFixed(2),
+      rotation: pos.tilt,
       phrase,
       typed: '',
       charIndex: 0,
@@ -88,7 +97,7 @@ function buildWriters() {
       deleteThreshold: 2,
       typeCounter: 0,
       deleteCounter: 0,
-      fontSize: (12 + Math.random() * 4).toFixed(1),
+      fontSize: (12 + Math.random() * 6).toFixed(1),
       opacity: (0.3 + Math.random() * 0.06).toFixed(3),
     };
   });
