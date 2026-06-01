@@ -1,11 +1,4 @@
-import { useRef, useState, useEffect, useMemo } from 'react';
-
-const cursorStyle = `
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-`;
+import { useRef, useState, useEffect } from 'react';
 
 const phrases = [
   // Stoic
@@ -80,25 +73,26 @@ function buildWriters() {
     const rows = 5;
     const col = i % cols;
     const row = Math.floor(i / cols) % rows;
-    const x = ((col + 0.5) / cols) * 96 + 2 + (Math.random() - 0.5) * 6;
-    const y = ((row + 0.5) / rows) * 94 + 2 + (Math.random() - 0.5) * 10;
+    const x = ((col + 0.5) / cols) * 96 + 2 + (Math.random() - 0.5) * 0.8;
+    const y = ((row + 0.5) / rows) * 94 + 3 + (Math.random() - 0.5) * 1.5;
 
     const phrase = phrases[rand(phrases.length)];
     return {
       id: i,
-      x: x.toFixed(1), y: y.toFixed(1),
+      x: x.toFixed(2), y: y.toFixed(2),
       phrase,
       typed: '',
       charIndex: 0,
       phase: 'waiting',
       frame: 0,
       waitFrames: rand(10),
-      pauseFrames: 50,
-      typeInterval: 6 + rand(5),
-      deleteInterval: 2 + rand(2),
+      pauseFrames: 60,
+      typeThreshold: 3,
+      deleteThreshold: 2,
+      typeCounter: 0,
+      deleteCounter: 0,
       fontSize: (11 + Math.random() * 4).toFixed(1),
       opacity: (0.3 + Math.random() * 0.05).toFixed(3),
-      rotation: ((Math.random() - 0.5) * 6).toFixed(1),
     };
   });
 }
@@ -122,9 +116,12 @@ export default function BackgroundScene() {
             w.frame = 0;
             w.charIndex = 0;
             w.typed = '';
+            w.typeCounter = 0;
           }
         } else if (w.phase === 'typing') {
-          if (w.frame % w.typeInterval === 0 && w.charIndex < w.phrase.length) {
+          w.typeCounter++;
+          if (w.typeCounter >= w.typeThreshold && w.charIndex < w.phrase.length) {
+            w.typeCounter = 0;
             w.charIndex++;
             w.typed = w.phrase.slice(0, w.charIndex);
             if (w.charIndex >= w.phrase.length) {
@@ -136,15 +133,18 @@ export default function BackgroundScene() {
           if (w.frame >= w.pauseFrames) {
             w.phase = 'deleting';
             w.frame = 0;
+            w.deleteCounter = 0;
           }
         } else if (w.phase === 'deleting') {
-          if (w.frame % w.deleteInterval === 0 && w.charIndex > 0) {
+          w.deleteCounter++;
+          if (w.deleteCounter >= w.deleteThreshold && w.charIndex > 0) {
+            w.deleteCounter = 0;
             w.charIndex--;
             w.typed = w.phrase.slice(0, w.charIndex);
             if (w.charIndex <= 0) {
               w.phase = 'waiting';
               w.frame = 0;
-              w.waitFrames = 25;
+              w.waitFrames = 30;
               let next;
               do { next = phrases[rand(phrases.length)]; } while (next === w.phrase);
               w.phrase = next;
@@ -153,13 +153,12 @@ export default function BackgroundScene() {
         }
       }
       setTick(t => t + 1);
-    }, 60);
+    }, 50);
     return () => clearInterval(id);
   }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none" style={{ letterSpacing: '0.12em' }}>
-      <style>{cursorStyle}</style>
       {ref.current.map(w => (
         <span
           key={w.id}
@@ -170,18 +169,9 @@ export default function BackgroundScene() {
             fontSize: w.fontSize + 'px',
             opacity: w.opacity,
             color: '#3b82f6',
-            transform: `rotate(${w.rotation}deg)`,
-            transformOrigin: '0 50%',
           }}
         >
           {w.typed}
-          <span
-            className="inline-block w-[1ch] h-[1.1em] ml-[1px] align-middle"
-            style={{
-              backgroundColor: '#3b82f6',
-              animation: 'blink 1s step-end infinite',
-            }}
-          />
         </span>
       ))}
     </div>
