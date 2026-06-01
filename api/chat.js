@@ -61,6 +61,20 @@ async function callAI(model, systemPrompt, message, retries = 5) {
   }
 }
 
+function parseResponse(text) {
+  const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[1]);
+      const reply = text.replace(/```json\n[\s\S]*?\n```/, '').trim();
+      return { reply, mutations: parsed.mutations || [] };
+    } catch (e) {
+      // fall through
+    }
+  }
+  return { reply: text, mutations: [] };
+}
+
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -68,7 +82,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ reply: 'Method not allowed' });
+    return res.status(405).json({ reply: 'Method not allowed', mutations: [] });
   }
 
   try {
@@ -76,7 +90,8 @@ export default async function handler(req, res) {
 
     if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
       return res.json({
-        reply: "⚠️ **Gemini API key not configured.**\n\nSet `GEMINI_API_KEY` in your Vercel environment variables.\n\nGet a free key at: https://aistudio.google.com/apikey"
+        reply: "⚠️ Gemini API key not configured.\n\nSet `GEMINI_API_KEY` in your Vercel environment variables.",
+        mutations: [],
       });
     }
 
@@ -89,6 +104,38 @@ export default async function handler(req, res) {
 User data:
 ${JSON.stringify(trimmed)}
 
+Your job is twofold:
+1. Respond as a coach — direct, honest, motivating
+2. Update the dashboard when the user reports doing something
+
+When the user tells you they did something (ran, studied, slept, worked out, made progress, etc.),
+output a JSON block with mutations AFTER your text reply, in this format:
+
+\`\`\`json
+{
+  "mutations": [
+    { "action": "toggleChecklist", "id": "<item id from today's checklist>" },
+    { "action": "logWorkout", "text": "description of workout" },
+    { "action": "logSleep", "hours": 7.5 },
+    { "action": "updateGoal", "level": "monthly", "id": "<goal id>", "progress": 50 },
+    { "action": "toggleChallengeStep", "challengeId": "<challenge id>", "stepId": "<step id>" },
+    { "action": "addTodo", "text": "new milestone text" },
+    { "action": "updateChecklistProgress", "id": "<preset item id>", "active": true }
+  ]
+}
+\`\`\`
+
+Available actions:
+- toggleChecklist: toggle a today's checklist item. id is mandatory. Add omit done to toggle.
+- logWorkout: log a workout entry. text is the description.
+- logSleep: log sleep hours. hours is a number.
+- updateGoal: update a goal's progress. level is "fiveYear", "yearly", or "monthly". id and progress (0-100) are mandatory.
+- toggleChallengeStep: toggle a challenge step. challengeId and stepId are mandatory.
+- addTodo: add a new milestone. text is mandatory.
+- updateChecklistProgress: toggle a preset checklist item's active state.
+
+If the user's action doesn't clearly map to an action, just respond as a coach — no JSON needed.
+
 Rules:
 - Direct commands. "Run 5km tomorrow 6AM." not "maybe try"
 - Call out inconsistency. "3 days no workout. Fix it."
@@ -98,14 +145,15 @@ Rules:
 - Bold for commands.
 - If asked about goals they haven't set, tell them to set them first.`;
 
-    const reply = await callAI(model, systemPrompt, message);
-    res.json({ reply });
+    const raw = await callAI(model, systemPrompt, message);
+    const { reply, mutations } = parseResponse(raw);
+    res.json({ reply, mutations });
   } catch (error) {
     console.error('AI chat error:', error);
     const msg = error.message || '';
     let friendly = msg;
-    if (msg.includes('429') || msg.includes('quota')) friendly = 'Free tier quota exceeded. Wait a minute and try again, or check your Gemini API usage.';
+    if (msg.includes('429') || msg.includes('quota')) friendly = 'Free tier quota exceeded. Wait a minute and try again.';
     else if (msg.includes('503') || msg.includes('timed out')) friendly = 'Gemini is under high demand. Retrying automatically... try again in a few seconds.';
-    res.status(500).json({ reply: `⚠️ **AI error:** ${friendly}` });
+    res.status(500).json({ reply: `⚠️ AI error: ${friendly}`, mutations: [] });
   }
 }

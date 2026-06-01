@@ -34,50 +34,74 @@ export default function TodoList() {
   const sorted = [...todos].sort((a, b) => b.progress - a.progress);
 
   return (
-    <div className="tab-content">
-      <h2>To-Do List</h2>
-      <p className="section-subtitle">Long-term milestones. Stays until checked off.</p>
+    <div className="max-w-2xl mx-auto space-y-5">
+      <p className="text-xs text-slate-500">Long-term milestones. Stays until checked off.</p>
 
-      <div className="add-row">
+      <div className="flex gap-2">
         <input
           type="text" placeholder="Add a milestone..." value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
-          className="input-text"
+          className="flex-1 bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors"
         />
-        <button className="btn-primary" onClick={addTodo}>+</button>
+        <button onClick={addTodo} className="px-3 py-2 text-xs bg-blue-900/30 border border-blue-900/60 text-blue-400 rounded-md hover:bg-blue-900/50 transition-all duration-150">
+          + Add
+        </button>
       </div>
 
-      <div className="todo-list">
-        {sorted.map(todo => (
-          <div key={todo.id} className={`todo-card ${todo.progress >= 100 ? 'completed' : ''}`}>
-            <div className="todo-header" onClick={() => setExpanded(expanded === todo.id ? null : todo.id)}>
-              <div className="todo-info">
-                <span className="todo-text">{todo.text}</span>
-                <span className="todo-percent">{todo.progress}%</span>
+      <div className="space-y-2">
+        {sorted.map(todo => {
+          const isComplete = todo.progress >= 100;
+          return (
+            <div
+              key={todo.id}
+              className={`bg-[#0a0a0a] border rounded-lg overflow-hidden transition-all duration-150 ${
+                isComplete ? 'border-green-900/40 opacity-60' : 'border-[#1e3a5f]/60 hover:border-slate-600'
+              }`}
+            >
+              <div
+                className="px-4 py-3 cursor-pointer"
+                onClick={() => setExpanded(expanded === todo.id ? null : todo.id)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-sm ${isComplete ? 'line-through text-slate-600' : 'text-slate-200'}`}>
+                    {todo.text}
+                  </span>
+                  <span className="text-xs text-slate-500 ml-3">{todo.progress}%</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range" min="0" max="100" value={todo.progress}
+                    onChange={(e) => updateTodo(todo.id, { progress: Number(e.target.value) })}
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex-1 h-1.5 bg-[#1e3a5f]/40 rounded-full appearance-none cursor-pointer
+                      [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500
+                      [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#0a0a0a]
+                      [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full
+                      [&::-moz-range-thumb]:bg-blue-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#0a0a0a]"
+                  />
+                  <button
+                    className="text-xs text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                    onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
-              <div className="todo-actions">
-                <input
-                  type="range" min="0" max="100" value={todo.progress}
-                  onChange={(e) => updateTodo(todo.id, { progress: Number(e.target.value) })}
-                  className="progress-slider"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <button className="btn-sm danger" onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}>✕</button>
-              </div>
+              {expanded === todo.id && (
+                <div className="px-4 pb-3 border-t border-[#1e3a5f]/30 pt-3">
+                  <textarea
+                    placeholder="Notes, deadlines, links..."
+                    value={todo.notes || ''}
+                    onChange={(e) => updateTodo(todo.id, { notes: e.target.value })}
+                    className="w-full bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors resize-vertical min-h-[60px]"
+                  />
+                </div>
+              )}
             </div>
-            {expanded === todo.id && (
-              <div className="todo-notes">
-                <textarea
-                  placeholder="Notes, deadlines, links..."
-                  value={todo.notes || ''}
-                  onChange={(e) => updateTodo(todo.id, { notes: e.target.value })}
-                  className="input-textarea"
-                />
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

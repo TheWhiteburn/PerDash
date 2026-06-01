@@ -8,5 +8,6 @@ dist/
 server/.env
 server/node_modules/
 *.log
+recovery-codes*.txt
 
 .vercel

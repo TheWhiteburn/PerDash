@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { DataProvider, useData } from './store';
 import { downloadBackup, uploadBackup } from './utils/backup';
-import TabNav from './components/TabNav';
+import SidebarNav from './components/SidebarNav';
 import Overview from './components/Overview';
 import Goals from './components/Goals';
 import DailyChecklist from './components/DailyChecklist';
@@ -9,74 +9,70 @@ import TodoList from './components/TodoList';
 import WorkoutTracker from './components/WorkoutTracker';
 import SleepTracker from './components/SleepTracker';
 import AIChat from './components/AIChat';
-
-const TABS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'goals', label: 'Goals' },
-  { id: 'checklist', label: 'Daily Checklist' },
-  { id: 'todos', label: 'To-Do' },
-  { id: 'workouts', label: 'Workouts' },
-  { id: 'sleep', label: 'Sleep' },
-];
+import BackgroundScene from './components/BackgroundScene';
 
 function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [chatOpen, setChatOpen] = useState(false);
-  const [showDataMenu, setShowDataMenu] = useState(false);
   const { exportData, importData } = useData();
 
   const handleExport = useCallback(() => {
     downloadBackup(exportData());
-    setShowDataMenu(false);
   }, [exportData]);
 
   const handleImport = useCallback(async () => {
     try {
       const newData = await uploadBackup();
       importData(newData);
-      setShowDataMenu(false);
-      alert('Data imported successfully!');
     } catch (e) {
       alert('Import failed: ' + e);
     }
   }, [importData]);
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <div className="header-left">
-          <h1 className="app-title">⚡ Personal Dashboard</h1>
-          <span className="header-date">{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-        </div>
-        <div className="header-right">
-          <button className="btn-icon" onClick={() => setChatOpen(true)} title="AI Coach">
-            🤖
-          </button>
-          <div className="data-menu-container">
-            <button className="btn-icon" onClick={() => setShowDataMenu(v => !v)} title="Data">
-              💾
-            </button>
-            {showDataMenu && (
-              <div className="data-menu">
-                <button onClick={handleExport}>📥 Export Backup</button>
-                <button onClick={handleImport}>📤 Import Backup</button>
-              </div>
-            )}
+    <div className="flex h-screen bg-black text-slate-200 overflow-hidden">
+      <SidebarNav active={activeTab} onSelect={setActiveTab} />
+      <div className="flex-1 flex flex-col min-w-0 relative">
+        <header className="flex items-center justify-between px-6 py-3 border-b border-[#1e3a5f]/40 shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="text-blue-400 text-lg">◉</span>
+            <h1 className="text-sm font-medium tracking-wide text-slate-200">
+              Avijeet's PerDash
+            </h1>
           </div>
-        </div>
-      </header>
-
-      <TabNav tabs={TABS} active={activeTab} onSelect={setActiveTab} />
-
-      <main className="app-main">
-        {activeTab === 'overview' && <Overview />}
-        {activeTab === 'goals' && <Goals />}
-        {activeTab === 'checklist' && <DailyChecklist />}
-        {activeTab === 'todos' && <TodoList />}
-        {activeTab === 'workouts' && <WorkoutTracker />}
-        {activeTab === 'sleep' && <SleepTracker />}
-      </main>
-
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setChatOpen(true)}
+              className="px-3 py-1.5 text-xs bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-blue-400 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150 tracking-wide"
+            >
+              Coach
+            </button>
+            <button
+              onClick={handleExport}
+              className="px-3 py-1.5 text-xs bg-[#0a0a0a] border border-[#1e3a5f]/40 text-slate-400 rounded-md hover:text-slate-200 hover:border-slate-600 transition-all duration-150"
+              title="Export backup"
+            >
+              ↓ Export
+            </button>
+            <button
+              onClick={handleImport}
+              className="px-3 py-1.5 text-xs bg-[#0a0a0a] border border-[#1e3a5f]/40 text-slate-400 rounded-md hover:text-slate-200 hover:border-slate-600 transition-all duration-150"
+              title="Import backup"
+            >
+              ↑ Import
+            </button>
+          </div>
+        </header>
+        <BackgroundScene />
+        <main className="flex-1 overflow-y-auto p-6 relative z-10">
+          {activeTab === 'overview' && <Overview />}
+          {activeTab === 'goals' && <Goals />}
+          {activeTab === 'checklist' && <DailyChecklist />}
+          {activeTab === 'todos' && <TodoList />}
+          {activeTab === 'workouts' && <WorkoutTracker />}
+          {activeTab === 'sleep' && <SleepTracker />}
+        </main>
+      </div>
       {chatOpen && <AIChat onClose={() => setChatOpen(false)} />}
     </div>
   );

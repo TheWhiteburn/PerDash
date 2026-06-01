@@ -6,6 +6,7 @@ export default function DailyChecklist() {
   const items = getTodayChecklist();
   const doneCount = items.filter(i => i.done).length;
   const totalCount = items.length;
+  const progress = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
   const toggleItem = (id) => {
     const updated = items.map(i => i.id === id ? { ...i, done: !i.done } : i);
@@ -48,49 +49,65 @@ export default function DailyChecklist() {
   };
 
   return (
-    <div className="tab-content">
-      <h2>Daily Checklist</h2>
-
-      <div className="checklist-progress">
-        <div className="progress-bar-container large">
-          <div className="progress-bar-fill" style={{ width: totalCount > 0 ? `${(doneCount / totalCount) * 100}%` : '0%' }} />
+    <div className="max-w-2xl mx-auto space-y-5">
+      <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-xs text-slate-500 tracking-wider uppercase">Today</span>
+          <span className="text-xs text-slate-500">{doneCount}/{totalCount} done</span>
         </div>
-        <span className="progress-label">{doneCount}/{totalCount} done</span>
+        <div className="h-2 bg-[#1e3a5f]/40 rounded-full overflow-hidden mb-5">
+          <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="space-y-1">
+          {items.map(item => (
+            <label
+              key={item.id}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-all duration-150 ${
+                item.done ? 'bg-[#1e3a5f]/10' : 'bg-[#0a0a0a] border border-[#1e3a5f]/40 hover:border-slate-600'
+              }`}
+            >
+              <input
+                type="checkbox" checked={item.done}
+                onChange={() => toggleItem(item.id)}
+                className="appearance-none w-4 h-4 border-2 rounded-sm cursor-pointer shrink-0 transition-all duration-150
+                  checked:bg-blue-500 checked:border-blue-500
+                  border-slate-600 hover:border-slate-400
+                  checked:after:content-['✓'] checked:after:text-[10px] checked:after:text-black checked:after:flex checked:after:items-center checked:after:justify-center"
+              />
+              <span className={`text-sm ${item.done ? 'line-through text-slate-600' : 'text-slate-300'}`}>
+                {item.text}
+              </span>
+            </label>
+          ))}
+        </div>
+        <input
+          type="text" placeholder="Add a task for today..." onKeyDown={addManualItem}
+          className="w-full bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 mt-3 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors"
+        />
       </div>
 
-      <div className="checklist-items">
-        {items.map(item => (
-          <label key={item.id} className={`checklist-item ${item.done ? 'done' : ''}`}>
-            <input
-              type="checkbox" checked={item.done}
-              onChange={() => toggleItem(item.id)}
-              className="checkbox"
-            />
-            <span className="checklist-text">{item.text}</span>
-          </label>
-        ))}
-      </div>
-
-      <input
-        type="text" placeholder="Add a task for today..." onKeyDown={addManualItem}
-        className="input-text"
-      />
-
-      <div className="presets-section">
-        <h3>Recurring Items</h3>
-        {data.dailyChecklist.presets.map(p => (
-          <label key={p.id} className="preset-item">
-            <input
-              type="checkbox" checked={p.active}
-              onChange={() => togglePreset(p.id)}
-              className="checkbox"
-            />
-            <span className={p.active ? '' : 'inactive'}>{p.text}</span>
-          </label>
-        ))}
+      <div className="bg-[#0a0a0a] border border-[#1e3a5f]/40 rounded-lg p-5">
+        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Recurring Items</div>
+        <div className="space-y-1">
+          {data.dailyChecklist.presets.map(p => (
+            <label key={p.id} className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-[#1e3a5f]/10 transition-colors">
+              <input
+                type="checkbox" checked={p.active}
+                onChange={() => togglePreset(p.id)}
+                className="appearance-none w-4 h-4 border-2 rounded-sm cursor-pointer shrink-0 transition-all duration-150
+                  checked:bg-blue-500 checked:border-blue-500
+                  border-slate-600 hover:border-slate-400
+                  checked:after:content-['✓'] checked:after:text-[10px] checked:after:text-black checked:after:flex checked:after:items-center checked:after:justify-center"
+              />
+              <span className={`text-sm ${p.active ? 'text-slate-300' : 'text-slate-600 line-through'}`}>
+                {p.text}
+              </span>
+            </label>
+          ))}
+        </div>
         <input
           type="text" placeholder="Add recurring item..." onKeyDown={addPreset}
-          className="input-text"
+          className="w-full bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 mt-3 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors"
         />
       </div>
     </div>
