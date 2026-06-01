@@ -69,14 +69,12 @@ function rand(n) {
 
 function buildWriters() {
   const left = Array.from({ length: 12 }, (_, i) => ({
-    x: 3 + Math.random() * 13,
-    y: 4 + (i + 0.5) / 12 * 86 + (Math.random() - 0.5) * 2.5,
-    tilt: ((Math.random() - 0.5) * 30).toFixed(1),
+    x: 2 + Math.random() * 16,
+    y: 3 + (i + 0.5) / 12 * 88 + (Math.random() - 0.5) * 1,
   }));
   const right = Array.from({ length: 13 }, (_, i) => ({
-    x: 85 + Math.random() * 13,
-    y: 4 + (i + 0.5) / 13 * 86 + (Math.random() - 0.5) * 2.5,
-    tilt: ((Math.random() - 0.5) * 30).toFixed(1),
+    x: 78 + Math.random() * 14,
+    y: 3 + (i + 0.5) / 13 * 88 + (Math.random() - 0.5) * 1,
   }));
 
   return [...left, ...right].map((pos, i) => {
@@ -85,7 +83,7 @@ function buildWriters() {
       id: i,
       x: pos.x.toFixed(2),
       y: pos.y.toFixed(2),
-      rotation: pos.tilt,
+      rotation: 0,
       phrase,
       typed: '',
       charIndex: 0,
@@ -175,8 +173,7 @@ export default function BackgroundScene() {
             fontSize: w.fontSize + 'px',
             opacity: w.opacity,
             color: '#3b82f6',
-            transform: `rotate(${w.rotation}deg)`,
-            transformOrigin: '0 50%',
+
           }}
         >
           {w.typed}
