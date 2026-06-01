@@ -68,31 +68,28 @@ function rand(n) {
 }
 
 function buildWriters() {
-  return Array.from({ length: 50 }, (_, i) => {
-    const cols = 10;
-    const rows = 5;
-    const col = i % cols;
-    const row = Math.floor(i / cols) % rows;
-    const x = ((col + 0.5) / cols) * 96 + 2 + (Math.random() - 0.5) * 0.8;
-    const y = ((row + 0.5) / rows) * 94 + 3 + (Math.random() - 0.5) * 1.5;
+  return Array.from({ length: 35 }, (_, i) => {
+    const x = 3 + Math.random() * 94;
+    const y = 2 + Math.random() * 93;
 
     const phrase = phrases[rand(phrases.length)];
     return {
       id: i,
       x: x.toFixed(2), y: y.toFixed(2),
+      rotation: ((Math.random() - 0.5) * 30).toFixed(1),
       phrase,
       typed: '',
       charIndex: 0,
       phase: 'waiting',
       frame: 0,
-      waitFrames: rand(10),
+      waitFrames: rand(15),
       pauseFrames: 60,
       typeThreshold: 3,
       deleteThreshold: 2,
       typeCounter: 0,
       deleteCounter: 0,
-      fontSize: (11 + Math.random() * 4).toFixed(1),
-      opacity: (0.3 + Math.random() * 0.05).toFixed(3),
+      fontSize: (12 + Math.random() * 4).toFixed(1),
+      opacity: (0.3 + Math.random() * 0.06).toFixed(3),
     };
   });
 }
@@ -169,9 +166,15 @@ export default function BackgroundScene() {
             fontSize: w.fontSize + 'px',
             opacity: w.opacity,
             color: '#3b82f6',
+            transform: `rotate(${w.rotation}deg)`,
+            transformOrigin: '0 50%',
           }}
         >
           {w.typed}
+          <span
+            className="inline-block w-[1ch] h-[1.1em] ml-[1px] align-middle"
+            style={{ backgroundColor: '#3b82f6' }}
+          />
         </span>
       ))}
     </div>
