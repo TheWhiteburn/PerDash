@@ -92,12 +92,12 @@ function buildWriters() {
       charIndex: 0,
       phase: 'waiting',
       frame: 0,
-      waitFrames: rand(15),
-      pauseFrames: 30 + rand(40),
-      typeInterval: 1 + rand(2),
-      deleteInterval: 1,
-      fontSize: (10 + Math.random() * 4).toFixed(1),
-      opacity: (0.08 + Math.random() * 0.07).toFixed(3),
+      waitFrames: rand(10),
+      pauseFrames: 50,
+      typeInterval: 6 + rand(5),
+      deleteInterval: 2 + rand(2),
+      fontSize: (11 + Math.random() * 4).toFixed(1),
+      opacity: (0.3 + Math.random() * 0.05).toFixed(3),
       rotation: ((Math.random() - 0.5) * 6).toFixed(1),
     };
   });
@@ -144,7 +144,7 @@ export default function BackgroundScene() {
             if (w.charIndex <= 0) {
               w.phase = 'waiting';
               w.frame = 0;
-              w.waitFrames = 10 + rand(20);
+              w.waitFrames = 25;
               let next;
               do { next = phrases[rand(phrases.length)]; } while (next === w.phrase);
               w.phrase = next;
