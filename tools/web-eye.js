@@ -73,6 +73,14 @@ async function main() {
   });
 
   if (routes.length === 0) {
+    routes = await page.evaluate(() => {
+      const spans = document.querySelectorAll('nav button span');
+      if (spans.length > 0) return [...spans].map(s => '/' + s.textContent.trim().toLowerCase());
+      return [];
+    });
+  }
+
+  if (routes.length === 0) {
     console.log('  ⚠️ No routes detected, using fallback routes');
     routes = FALLBACK_ROUTES;
   }
