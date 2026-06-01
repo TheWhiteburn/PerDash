@@ -50,14 +50,14 @@ function Dashboard() {
             </button>
             <button
               onClick={handleExport}
-              className="px-3 py-1.5 text-xs bg-[#0a0a0a] border border-[#1e3a5f]/40 text-slate-400 rounded-md hover:text-slate-200 hover:border-slate-600 transition-all duration-150"
+              className="px-3 py-1.5 text-xs leading-none bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-slate-300 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150"
               title="Export backup"
             >
               ↓ Export
             </button>
             <button
               onClick={handleImport}
-              className="px-3 py-1.5 text-xs bg-[#0a0a0a] border border-[#1e3a5f]/40 text-slate-400 rounded-md hover:text-slate-200 hover:border-slate-600 transition-all duration-150"
+              className="px-3 py-1.5 text-xs leading-none bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-slate-300 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150"
               title="Import backup"
             >
               ↑ Import

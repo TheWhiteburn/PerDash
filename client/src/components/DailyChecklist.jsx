@@ -52,7 +52,7 @@ export default function DailyChecklist() {
     <div className="max-w-2xl mx-auto space-y-5">
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-slate-500 tracking-wider uppercase">Today</span>
+          <span className="text-xs text-slate-400 tracking-wider uppercase">Today</span>
           <span className="text-xs text-slate-500">{doneCount}/{totalCount} done</span>
         </div>
         <div className="h-2 bg-[#1e3a5f]/40 rounded-full overflow-hidden mb-5">
@@ -87,7 +87,7 @@ export default function DailyChecklist() {
       </div>
 
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/40 rounded-lg p-5">
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Recurring Items</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Recurring Items</div>
         <div className="space-y-1">
           {data.dailyChecklist.presets.map(p => (
             <label key={p.id} className="flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer hover:bg-[#1e3a5f]/10 transition-colors">

@@ -25,7 +25,7 @@ export default function Overview() {
         <svg viewBox="0 0 120 120" className="w-28 h-28 shrink-0">
           <circle cx="60" cy="60" r="54" fill="none" stroke="#1e3a5f" strokeWidth="8" />
           <circle
-            cx="60" cy="60" r="54" fill="none" stroke="#3b82f6" strokeWidth="8"
+            cx="60" cy="60" r="54" fill="none" stroke={overall < 10 ? '#ef4444' : '#3b82f6'} strokeWidth="8"
             strokeLinecap="round" strokeDasharray={ringCircumference}
             strokeDashoffset={ringCircumference - (ringCircumference * overall) / 100}
             transform="rotate(-90 60 60)"
@@ -36,7 +36,7 @@ export default function Overview() {
           </text>
         </svg>
         <div>
-          <div className="text-xs text-slate-500 tracking-wider uppercase mb-1">Overall Progress</div>
+          <div className="text-xs text-slate-400 tracking-wider uppercase mb-1">Overall Progress</div>
           {overall < 10 && <p className="text-blue-400 text-sm">Just started. Every day counts. Lock in.</p>}
           {overall >= 10 && overall < 30 && <p className="text-blue-400 text-sm">Building momentum. Stay consistent.</p>}
           {overall >= 30 && overall < 60 && <p className="text-blue-400 text-sm">Solid progress. Keep pushing.</p>}
@@ -52,7 +52,7 @@ export default function Overview() {
               m.urgent ? 'border-red-900/50' : 'border-[#1e3a5f]/60'
             }`}
           >
-            <div className="text-[10px] text-slate-600 tracking-wider uppercase mb-1">{m.label}</div>
+            <div className="text-[10px] text-slate-400 tracking-wider uppercase mb-1">{m.label}</div>
             <div className={`text-lg font-semibold ${m.urgent ? 'text-red-400' : 'text-slate-200'}`}>
               {m.value}
             </div>
@@ -61,7 +61,7 @@ export default function Overview() {
       </div>
 
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Current Focus</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Current Focus</div>
         <p className="text-sm font-medium text-slate-200 mb-3">{topGoal?.text || 'No goals set'}</p>
         <div className="h-2 bg-[#1e3a5f]/40 rounded-full overflow-hidden">
           <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${topGoal?.progress || 0}%` }} />
@@ -71,13 +71,13 @@ export default function Overview() {
 
       {data.workouts.challenges.filter(c => c.active).length > 0 && (
         <div>
-          <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Active Challenges</div>
+          <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Active Challenges</div>
           <div className="space-y-2">
             {data.workouts.challenges.filter(c => c.active).map(c => {
               const done = c.steps.filter(s => s.done).length;
               const total = c.steps.length;
               return (
-                <div key={c.id} className="flex items-center justify-between bg-[#0a0a0a] border border-[#1e3a5f]/40 rounded-lg px-4 py-2.5">
+                <div key={c.id} className="flex items-center justify-between bg-[#0a0a0a] border border-[#1e3a5f]/40 rounded-lg p-4">
                   <span className="text-sm text-slate-300">{c.name}</span>
                   <span className="text-xs text-slate-500">{done}/{total} steps</span>
                 </div>

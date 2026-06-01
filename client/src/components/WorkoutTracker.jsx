@@ -71,7 +71,7 @@ export default function WorkoutTracker() {
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
         <div className="flex items-center gap-4 flex-wrap">
           <div>
-            <div className="text-[10px] text-slate-600 tracking-wider uppercase">This Week</div>
+            <div className="text-[10px] text-slate-400 tracking-wider uppercase">This Week</div>
             <div className={`text-lg font-semibold ${streak < 3 ? 'text-red-400' : 'text-slate-200'}`}>
               {streak}/7 days
             </div>
@@ -94,7 +94,7 @@ export default function WorkoutTracker() {
       </div>
 
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Today's Log</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Today's Log</div>
         <div className="flex gap-2 mb-3">
           <input
             type="text" placeholder="e.g., Ran 5km, 30min" value={logText}
@@ -117,7 +117,7 @@ export default function WorkoutTracker() {
       </div>
 
       <div>
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Active Challenges</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Active Challenges</div>
         <div className="space-y-3">
           {data.workouts.challenges.filter(c => c.active).map(c => {
             const doneSteps = c.steps.filter(s => s.done).length;

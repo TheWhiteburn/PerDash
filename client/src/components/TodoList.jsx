@@ -35,7 +35,7 @@ export default function TodoList() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <p className="text-xs text-slate-500">Long-term milestones. Stays until checked off.</p>
+      <p className="text-xs text-slate-400">Long-term milestones. Stays until checked off.</p>
 
       <div className="flex gap-2">
         <input

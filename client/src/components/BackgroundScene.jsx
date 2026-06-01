@@ -179,7 +179,7 @@ export default function BackgroundScene() {
           {w.typed}
           <span
             className="inline-block w-[1ch] h-[1.1em] ml-[1px] align-middle"
-            style={{ backgroundColor: '#3b82f6' }}
+            style={{             backgroundColor: '#1e4d8c' }}
           />
         </span>
       ))}

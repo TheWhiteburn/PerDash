@@ -13,7 +13,7 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
 
   return (
     <div>
-      <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">{title}</div>
+      <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">{title}</div>
       <div className="space-y-2">
         {goals.map(g => {
           const status = getGoalDeadlineStatus(g);
@@ -112,7 +112,7 @@ export default function Goals() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <p className="text-xs text-slate-500">5-Year → Yearly → Monthly. Each milestone feeds the next.</p>
+      <p className="text-xs text-slate-400">5-Year → Yearly → Monthly. Each milestone feeds the next.</p>
       <GoalSection
         title="5-Year Goals"
         goals={fiveYear}

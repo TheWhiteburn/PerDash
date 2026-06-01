@@ -29,7 +29,7 @@ export default function SleepTracker() {
       <p className="text-xs text-slate-500">Target: {target}h minimum</p>
 
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-3">Log Tonight's Sleep</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-3">Log Tonight's Sleep</div>
         <div className="flex gap-2">
           <input
             type="number" step="0.5" min="0" max="24"
@@ -47,17 +47,17 @@ export default function SleepTracker() {
 
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-4">
-          <div className="text-[10px] text-slate-600 tracking-wider uppercase mb-1">Weekly Average</div>
+          <div className="text-[10px] text-slate-400 tracking-wider uppercase mb-1">Weekly Average</div>
           <div className={`text-lg font-semibold ${avg < target ? 'text-red-400' : 'text-slate-200'}`}>{avg}h</div>
         </div>
         <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-4">
-          <div className="text-[10px] text-slate-600 tracking-wider uppercase mb-1">Target</div>
+          <div className="text-[10px] text-slate-400 tracking-wider uppercase mb-1">Target</div>
           <div className="text-lg font-semibold text-slate-200">{target}h</div>
         </div>
       </div>
 
       <div className="bg-[#0a0a0a] border border-[#1e3a5f]/60 rounded-lg p-5">
-        <div className="text-xs text-slate-500 tracking-wider uppercase mb-4">7-Day Trend</div>
+        <div className="text-xs text-slate-400 tracking-wider uppercase mb-4">7-Day Trend</div>
         {trend.length === 0 ? (
           <span className="text-xs text-slate-600 italic">No sleep data logged yet</span>
         ) : (
