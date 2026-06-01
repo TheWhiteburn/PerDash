@@ -1,4 +1,11 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
+
+const cursorStyle = `
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+`;
 
 const phrases = [
   // Stoic
@@ -85,12 +92,12 @@ function buildWriters() {
       charIndex: 0,
       phase: 'waiting',
       frame: 0,
-      waitFrames: rand(200),
+      waitFrames: rand(15),
       pauseFrames: 30 + rand(40),
       typeInterval: 1 + rand(2),
       deleteInterval: 1,
       fontSize: (10 + Math.random() * 4).toFixed(1),
-      opacity: (0.03 + Math.random() * 0.035).toFixed(3),
+      opacity: (0.08 + Math.random() * 0.07).toFixed(3),
       rotation: ((Math.random() - 0.5) * 6).toFixed(1),
     };
   });
@@ -152,6 +159,7 @@ export default function BackgroundScene() {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none" style={{ letterSpacing: '0.12em' }}>
+      <style>{cursorStyle}</style>
       {ref.current.map(w => (
         <span
           key={w.id}
@@ -167,7 +175,13 @@ export default function BackgroundScene() {
           }}
         >
           {w.typed}
-          <span className="inline-block w-[1ch] h-[1em] ml-[1px] align-middle animate-pulse" style={{ backgroundColor: '#3b82f6' }} />
+          <span
+            className="inline-block w-[1ch] h-[1.1em] ml-[1px] align-middle"
+            style={{
+              backgroundColor: '#3b82f6',
+              animation: 'blink 1s step-end infinite',
+            }}
+          />
         </span>
       ))}
     </div>
