@@ -4,7 +4,7 @@ import { useData } from '../store';
 function ladder(v, l=40, h=90) {
   if (v < l) return { cls: 'text-red-400' };
   if (v >= h) return { cls: 'text-green-400' };
-  return { cls: 'text-gray-700' };
+  return { cls: 'text-gray-300' };
 }
 
 export default function TodoList() {
@@ -48,9 +48,9 @@ export default function TodoList() {
           type="text" placeholder="Add a milestone..." value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
-          className="flex-1 bg-white border border-black/20 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-500 transition-colors"
+          className="flex-1 bg-black border border-white/15 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
-        <button onClick={addTodo} className="px-3 py-2 text-xs bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-all duration-150">
+        <button onClick={addTodo} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150">
           + Add
         </button>
       </div>
@@ -62,16 +62,14 @@ export default function TodoList() {
           return (
             <div
               key={todo.id}
-              className={`bg-[#f5f5f5] border border-black rounded-lg overflow-hidden transition-all duration-150 shadow-card-white ${
-                isComplete ? 'opacity-60' : ''
-              }`}
+              className={`bg-[#0a0a0a] border border-white/15 rounded-lg overflow-hidden transition-all duration-150 shadow-card-white ${isComplete ? 'opacity-60' : ''}`}
             >
               <div
                 className="px-4 py-3 cursor-pointer"
                 onClick={() => setExpanded(expanded === todo.id ? null : todo.id)}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-sm ${isComplete ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+                  <span className={`text-sm ${isComplete ? 'line-through text-gray-600' : 'text-gray-200'}`}>
                     {todo.text}
                   </span>
                   <span className={`text-xs ml-3 ${pc.cls}`}>{todo.progress}%</span>
@@ -81,15 +79,15 @@ export default function TodoList() {
                     type="range" min="0" max="100" value={todo.progress}
                     onChange={(e) => updateTodo(todo.id, { progress: Number(e.target.value) })}
                     onClick={(e) => e.stopPropagation()}
-                    className="flex-1 h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer
+                    className="flex-1 h-1.5 bg-gray-800 rounded-full appearance-none cursor-pointer
                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
-                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gray-700
-                      [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white
+                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gray-300
+                      [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#0a0a0a]
                       [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full
-                      [&::-moz-range-thumb]:bg-gray-700 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
+                      [&::-moz-range-thumb]:bg-gray-300 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#0a0a0a]"
                   />
                   <button
-                    className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                    className="text-xs text-gray-500 hover:text-red-400 transition-colors shrink-0"
                     onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}
                   >
                     ✕
@@ -97,12 +95,12 @@ export default function TodoList() {
                 </div>
               </div>
               {expanded === todo.id && (
-                <div className="px-4 pb-3 border-t border-black/10 pt-3">
+                <div className="px-4 pb-3 border-t border-white/10 pt-3">
                   <textarea
                     placeholder="Notes, deadlines, links..."
                     value={todo.notes || ''}
                     onChange={(e) => updateTodo(todo.id, { notes: e.target.value })}
-                    className="w-full bg-white border border-black/20 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-500 transition-colors resize-vertical min-h-[60px]"
+                    className="w-full bg-black border border-white/15 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors resize-vertical min-h-[60px]"
                   />
                 </div>
               )}
