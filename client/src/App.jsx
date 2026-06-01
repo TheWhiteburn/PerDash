@@ -34,30 +34,30 @@ function Dashboard() {
       <BackgroundScene />
       <SidebarNav active={activeTab} onSelect={setActiveTab} />
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        <header className="flex items-center justify-between px-6 py-3 border-b border-[#1e3a5f]/40 shrink-0 bg-black/80 backdrop-blur-sm">
+        <header className="flex items-center justify-between px-6 py-3 border-b border-white/10 shrink-0 bg-black/80 backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <span className="text-blue-400 text-lg">◉</span>
-            <h1 className="text-sm font-medium tracking-wide text-slate-200">
+            <span className="text-slate-200 text-lg">◉</span>
+            <h1 className="text-sm font-medium tracking-wide text-white">
               Avijeet's PerDash
             </h1>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setChatOpen(true)}
-              className="px-3 py-1.5 text-xs bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-blue-400 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150 tracking-wide"
+              className="px-3 py-1.5 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150 tracking-wide"
             >
               Coach
             </button>
             <button
               onClick={handleExport}
-              className="px-3 py-1.5 text-xs leading-none bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-slate-300 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150"
+              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150"
               title="Export backup"
             >
               ↓ Export
             </button>
             <button
               onClick={handleImport}
-              className="px-3 py-1.5 text-xs leading-none bg-[#1e3a5f]/30 border border-[#1e3a5f]/60 text-slate-300 rounded-md hover:bg-[#1e3a5f]/50 transition-all duration-150"
+              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150"
               title="Import backup"
             >
               ↑ Import

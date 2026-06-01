@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useData } from '../store';
 
+function ladder(v, l=40, h=90) {
+  if (v < l) return { cls: 'text-red-400' };
+  if (v >= h) return { cls: 'text-green-400' };
+  return { cls: 'text-gray-700' };
+}
+
 export default function TodoList() {
   const { data, updateData } = useData();
   const [newText, setNewText] = useState('');
@@ -35,16 +41,16 @@ export default function TodoList() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <p className="text-xs text-slate-400">Long-term milestones. Stays until checked off.</p>
+      <p className="text-xs text-gray-400">Long-term milestones. Stays until checked off.</p>
 
       <div className="flex gap-2">
         <input
           type="text" placeholder="Add a milestone..." value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
-          className="flex-1 bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors"
+          className="flex-1 bg-white border border-black/20 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-500 transition-colors"
         />
-        <button onClick={addTodo} className="px-3 py-2 text-xs bg-blue-900/30 border border-blue-900/60 text-blue-400 rounded-md hover:bg-blue-900/50 transition-all duration-150">
+        <button onClick={addTodo} className="px-3 py-2 text-xs bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-all duration-150">
           + Add
         </button>
       </div>
@@ -52,11 +58,12 @@ export default function TodoList() {
       <div className="space-y-2">
         {sorted.map(todo => {
           const isComplete = todo.progress >= 100;
+          const pc = ladder(todo.progress);
           return (
             <div
               key={todo.id}
-              className={`bg-[#0a0a0a] border rounded-lg overflow-hidden transition-all duration-150 ${
-                isComplete ? 'border-green-900/40 opacity-60' : 'border-[#1e3a5f]/60 hover:border-slate-600'
+              className={`bg-[#f5f5f5] border border-black rounded-lg overflow-hidden transition-all duration-150 shadow-card-white ${
+                isComplete ? 'opacity-60' : ''
               }`}
             >
               <div
@@ -64,25 +71,25 @@ export default function TodoList() {
                 onClick={() => setExpanded(expanded === todo.id ? null : todo.id)}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className={`text-sm ${isComplete ? 'line-through text-slate-600' : 'text-slate-200'}`}>
+                  <span className={`text-sm ${isComplete ? 'line-through text-gray-400' : 'text-gray-900'}`}>
                     {todo.text}
                   </span>
-                  <span className="text-xs text-slate-500 ml-3">{todo.progress}%</span>
+                  <span className={`text-xs ml-3 ${pc.cls}`}>{todo.progress}%</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <input
                     type="range" min="0" max="100" value={todo.progress}
                     onChange={(e) => updateTodo(todo.id, { progress: Number(e.target.value) })}
                     onClick={(e) => e.stopPropagation()}
-                    className="flex-1 h-1.5 bg-[#1e3a5f]/40 rounded-full appearance-none cursor-pointer
+                    className="flex-1 h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer
                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
-                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500
-                      [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#0a0a0a]
+                      [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gray-700
+                      [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white
                       [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full
-                      [&::-moz-range-thumb]:bg-blue-500 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-[#0a0a0a]"
+                      [&::-moz-range-thumb]:bg-gray-700 [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white"
                   />
                   <button
-                    className="text-xs text-slate-600 hover:text-red-400 transition-colors shrink-0"
+                    className="text-xs text-gray-400 hover:text-red-500 transition-colors shrink-0"
                     onClick={(e) => { e.stopPropagation(); deleteTodo(todo.id); }}
                   >
                     ✕
@@ -90,12 +97,12 @@ export default function TodoList() {
                 </div>
               </div>
               {expanded === todo.id && (
-                <div className="px-4 pb-3 border-t border-[#1e3a5f]/30 pt-3">
+                <div className="px-4 pb-3 border-t border-black/10 pt-3">
                   <textarea
                     placeholder="Notes, deadlines, links..."
                     value={todo.notes || ''}
                     onChange={(e) => updateTodo(todo.id, { notes: e.target.value })}
-                    className="w-full bg-black border border-[#1e3a5f]/40 rounded-md px-3 py-2 text-sm text-slate-200 placeholder-slate-600 outline-none focus:border-blue-900/60 transition-colors resize-vertical min-h-[60px]"
+                    className="w-full bg-white border border-black/20 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-500 transition-colors resize-vertical min-h-[60px]"
                   />
                 </div>
               )}

@@ -172,14 +172,14 @@ export default function BackgroundScene() {
             top: w.y + '%',
             fontSize: w.fontSize + 'px',
             opacity: w.opacity,
-            color: '#3b82f6',
+            color: '#e5e7eb',
 
           }}
         >
           {w.typed}
           <span
             className="inline-block w-[1ch] h-[1.1em] ml-[1px] align-middle"
-            style={{             backgroundColor: '#1e4d8c' }}
+            style={{ backgroundColor: '#b0b0b0' }}
           />
         </span>
       ))}
