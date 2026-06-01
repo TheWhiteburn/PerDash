@@ -8,3 +8,5 @@ dist/
 server/.env
 server/node_modules/
 *.log
+
+.vercel
