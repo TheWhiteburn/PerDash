@@ -57,7 +57,7 @@ export default function DailyChecklist() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <div className="bg-[#0a0a0a] border border-white/15 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs text-gray-400 tracking-wider uppercase">Today</span>
           <span className={`text-xs ${pc.cls}`}>{doneCount}/{totalCount} done</span>
@@ -89,11 +89,11 @@ export default function DailyChecklist() {
         </div>
         <input
           type="text" placeholder="Add a task for today..." onKeyDown={addManualItem}
-          className="w-full bg-black border border-white/15 rounded-md px-3 py-2 mt-3 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+          className="w-full bg-black border border-white/25 rounded-md px-3 py-2 mt-3 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/15 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Recurring Items</div>
         <div className="space-y-1">
           {data.dailyChecklist.presets.map(p => (
@@ -114,7 +114,7 @@ export default function DailyChecklist() {
         </div>
         <input
           type="text" placeholder="Add recurring item..." onKeyDown={addPreset}
-          className="w-full bg-black border border-white/15 rounded-md px-3 py-2 mt-3 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+          className="w-full bg-black border border-white/25 rounded-md px-3 py-2 mt-3 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
       </div>
     </div>

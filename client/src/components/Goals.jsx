@@ -29,7 +29,7 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
           return (
             <div
               key={g.id}
-              className={`bg-[#0a0a0a] border border-white/15 rounded-lg p-4 shadow-card-white ${isCompleted ? 'opacity-60' : ''}`}
+              className={`bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white ${isCompleted ? 'opacity-60' : ''}`}
             >
               <div className="flex items-start justify-between gap-3 mb-3">
                 <span className={`text-sm flex-1 ${isCompleted ? 'line-through text-gray-600' : 'text-gray-200'}`}>
@@ -66,7 +66,7 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
           type="text" placeholder={`Add ${title.toLowerCase()}...`} value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
-          className="flex-1 bg-black border border-white/15 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+          className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
         <button onClick={handleAdd} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150">
           + Add

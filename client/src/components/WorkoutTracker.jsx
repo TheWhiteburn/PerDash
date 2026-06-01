@@ -75,7 +75,7 @@ export default function WorkoutTracker() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <div className="bg-[#0a0a0a] border border-white/15 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
         <div className="flex items-center gap-4 flex-wrap">
           <div>
             <div className="text-[10px] text-gray-400 tracking-wider uppercase">This Week</div>
@@ -94,14 +94,14 @@ export default function WorkoutTracker() {
         </div>
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/15 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Today's Log</div>
         <div className="flex gap-2 mb-3">
           <input
             type="text" placeholder="e.g., Ran 5km, 30min" value={logText}
             onChange={(e) => setLogText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLog()}
-            className="flex-1 bg-black border border-white/15 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+            className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
           />
           <button onClick={handleLog} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150">
             Log
@@ -125,7 +125,7 @@ export default function WorkoutTracker() {
             const progress = c.steps.length > 0 ? Math.round((doneSteps / c.steps.length) * 100) : 0;
             const pc = ladder(progress);
             return (
-              <div key={c.id} className="bg-[#0a0a0a] border border-white/15 rounded-lg p-4 shadow-card-white">
+              <div key={c.id} className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-200">{c.name}</span>
                   <span className={`text-xs ${pc.cls}`}>{doneSteps}/{c.steps.length}</span>
@@ -160,7 +160,7 @@ export default function WorkoutTracker() {
                           setNewStepText(p => ({ ...p, [c.id]: '' }));
                         }
                       }}
-                      className="w-full bg-black border border-white/15 rounded-md px-3 py-1.5 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+                      className="w-full bg-black border border-white/25 rounded-md px-3 py-1.5 text-xs text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
                     />
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function WorkoutTracker() {
             value={newChallenge}
             onChange={(e) => setNewChallenge(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { addChallenge(newChallenge); setNewChallenge(''); } }}
-            className="flex-1 bg-black border border-white/15 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
+            className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
           />
           <button className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150" onClick={() => { addChallenge(newChallenge); setNewChallenge(''); }}>
             Add
