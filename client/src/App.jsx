@@ -30,10 +30,11 @@ function Dashboard() {
   }, [importData]);
 
   return (
-    <div className="flex h-screen bg-black text-slate-200 overflow-hidden">
+    <div className="flex h-screen bg-black text-slate-200 overflow-hidden relative">
+      <BackgroundScene />
       <SidebarNav active={activeTab} onSelect={setActiveTab} />
-      <div className="flex-1 flex flex-col min-w-0 relative">
-        <header className="flex items-center justify-between px-6 py-3 border-b border-[#1e3a5f]/40 shrink-0">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+        <header className="flex items-center justify-between px-6 py-3 border-b border-[#1e3a5f]/40 shrink-0 bg-black/80 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <span className="text-blue-400 text-lg">◉</span>
             <h1 className="text-sm font-medium tracking-wide text-slate-200">
@@ -63,8 +64,7 @@ function Dashboard() {
             </button>
           </div>
         </header>
-        <BackgroundScene />
-        <main className="flex-1 overflow-y-auto p-6 relative z-10">
+        <main className="flex-1 overflow-y-auto p-6 relative">
           {activeTab === 'overview' && <Overview />}
           {activeTab === 'goals' && <Goals />}
           {activeTab === 'checklist' && <DailyChecklist />}
