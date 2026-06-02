@@ -23,14 +23,17 @@ export default function SidebarNav({ active, onSelect }) {
           <button
             key={tab.id}
             onClick={() => onSelect(tab.id)}
-            className={`flex items-center justify-center md:justify-start gap-3 px-2 md:px-3 py-2.5 rounded-md text-sm transition-all duration-150 ${
+            className={`group relative overflow-hidden flex items-center justify-center md:justify-start gap-3 px-2 md:px-3 py-2.5 rounded-md text-sm transition-all duration-200 hover:-translate-y-0.5 ${
               isActive
                 ? 'bg-white/10 text-white border border-white/30'
-                : 'text-white/65 hover:text-white hover:bg-white/5 border border-transparent'
+                : 'text-white/65 hover:text-white border border-transparent'
             }`}
           >
             <Icon size={18} strokeWidth={1.5} />
-            <span className="hidden md:inline text-xs tracking-wide">{tab.label}</span>
+            <span className="hidden md:inline text-xs tracking-wide relative">
+              <span className="relative z-10">{tab.label}</span>
+              <span className="absolute inset-0 bg-white/10 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+            </span>
           </button>
         );
       })}

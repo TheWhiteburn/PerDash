@@ -57,7 +57,7 @@ export default function DailyChecklist() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
         <div className="flex items-center justify-between mb-3">
           <span className="text-xs text-gray-400 tracking-wider uppercase">Today</span>
           <span className={`text-xs ${pc.cls}`}>{doneCount}/{totalCount} done</span>
@@ -93,7 +93,7 @@ export default function DailyChecklist() {
         />
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Recurring Items</div>
         <div className="space-y-1">
           {data.dailyChecklist.presets.map(p => (

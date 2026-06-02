@@ -30,7 +30,7 @@ export default function Overview() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <div className="flex items-center gap-5 bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
+      <div className="flex items-center gap-5 bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
         <svg viewBox="0 0 120 120" className="w-28 h-28 shrink-0">
           <circle cx="60" cy="60" r="54" fill="none" stroke="#333" strokeWidth="8" />
           <circle
@@ -38,7 +38,7 @@ export default function Overview() {
             strokeLinecap="round" strokeDasharray={ringCircumference}
             strokeDashoffset={ringCircumference - (ringCircumference * overall) / 100}
             transform="rotate(-90 60 60)"
-            className="transition-all duration-700 ease-out"
+            className="transition-all duration-700 ease-out pulse-ring"
           />
           <text x="60" y="60" textAnchor="middle" dominantBaseline="central" fill={ringColor.fill} fontSize="28" fontFamily="inherit" fontWeight="700">
             {overall}%
@@ -57,7 +57,7 @@ export default function Overview() {
         {metrics.map(m => {
           const mc = ladder(m.raw, m.low ?? 40, m.high ?? 90);
           return (
-            <div key={m.label} className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white">
+            <div key={m.label} className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
               <div className="text-[10px] text-gray-400 tracking-wider uppercase mb-2">{m.label}</div>
               <div className={`text-lg font-semibold ${mc.cls}`}>{m.value}</div>
             </div>
@@ -65,7 +65,7 @@ export default function Overview() {
         })}
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Current Focus</div>
         <p className="text-sm font-medium text-gray-200 mb-3">{topGoal?.text || 'No goals set'}</p>
         <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -84,7 +84,7 @@ export default function Overview() {
               const pct = total > 0 ? Math.round((done / total) * 100) : 0;
               const cc = ladder(pct);
               return (
-                <div key={c.id} className="flex items-center justify-between bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white">
+                <div key={c.id} className="flex items-center justify-between bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
                   <span className="text-sm text-gray-200">{c.name}</span>
                   <span className={`text-xs ${cc.cls}`}>{done}/{total} steps</span>
                 </div>

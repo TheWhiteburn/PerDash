@@ -115,9 +115,12 @@ export default function AIChat({ onClose }) {
           <span className="text-sm font-medium text-gray-900 tracking-wide">Coach</span>
           <button
             onClick={onClose}
-            className="text-xs text-gray-400 hover:text-gray-700 transition-colors px-2 py-1 rounded hover:bg-black/5"
+            className="group relative overflow-hidden text-xs text-gray-400 hover:text-gray-700 transition-colors px-2 py-1 rounded hover:bg-black/5"
           >
-            ✕ Esc
+            <span className="relative">
+              <span className="relative z-10">✕ Esc</span>
+              <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+            </span>
           </button>
         </div>
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
@@ -149,11 +152,14 @@ export default function AIChat({ onClose }) {
             className="flex-1 bg-white border border-black/20 rounded-md px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-500 transition-colors disabled:opacity-50"
           />
           <button
-            className="px-3 py-2 text-xs bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-all duration-150 disabled:opacity-50"
+            className="group relative overflow-hidden px-3 py-2 text-xs bg-gray-900 text-white rounded-md hover:bg-gray-800 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:-translate-y-0"
             onClick={sendMessage}
             disabled={loading}
           >
-            Send
+            <span className="relative">
+              <span className="relative z-10">Send</span>
+              <span className="absolute inset-0 bg-white/10 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+            </span>
           </button>
         </div>
       </div>

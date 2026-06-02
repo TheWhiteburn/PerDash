@@ -44,33 +44,44 @@ function Dashboard() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setChatOpen(true)}
-              className="px-3 py-1.5 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150 tracking-wide"
+              className="group relative overflow-hidden px-3 py-1.5 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200 tracking-wide"
             >
-              Coach
+              <span className="relative">
+                <span className="relative z-10">Coach</span>
+                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+              </span>
             </button>
             <button
               onClick={handleExport}
-              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150"
+              className="group relative overflow-hidden px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200"
               title="Export backup"
             >
-              ↓ Export
+              <span className="relative">
+                <span className="relative z-10">↓ Export</span>
+                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+              </span>
             </button>
             <button
               onClick={handleImport}
-              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 transition-all duration-150"
+              className="group relative overflow-hidden px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200"
               title="Import backup"
             >
-              ↑ Import
+              <span className="relative">
+                <span className="relative z-10">↑ Import</span>
+                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
+              </span>
             </button>
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-6 relative">
-          {activeTab === 'overview' && <Overview />}
-          {activeTab === 'goals' && <Goals />}
-          {activeTab === 'checklist' && <DailyChecklist />}
-          {activeTab === 'todos' && <TodoList />}
-          {activeTab === 'workouts' && <WorkoutTracker />}
-          {activeTab === 'sleep' && <SleepTracker />}
+          <div key={activeTab} className="fade-in">
+            {activeTab === 'overview' && <Overview />}
+            {activeTab === 'goals' && <Goals />}
+            {activeTab === 'checklist' && <DailyChecklist />}
+            {activeTab === 'todos' && <TodoList />}
+            {activeTab === 'workouts' && <WorkoutTracker />}
+            {activeTab === 'sleep' && <SleepTracker />}
+          </div>
         </main>
       </div>
       {chatOpen && <AIChat onClose={() => setChatOpen(false)} />}
