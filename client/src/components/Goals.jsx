@@ -29,7 +29,7 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
           return (
             <div
               key={g.id}
-              className={`bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300 ${isCompleted ? 'opacity-60' : ''}`}
+              className={`card-bg border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300 ${isCompleted ? 'opacity-60' : ''}`}
             >
               <div className="flex items-start justify-between gap-3 mb-3">
                 <span className={`text-sm flex-1 ${isCompleted ? 'line-through text-gray-600' : 'text-gray-200'}`}>

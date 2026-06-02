@@ -75,7 +75,7 @@ export default function WorkoutTracker() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-5">
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+      <div className="card-bg border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="flex items-center gap-4 flex-wrap">
           <div>
             <div className="text-[10px] text-gray-400 tracking-wider uppercase">This Week</div>
@@ -94,7 +94,7 @@ export default function WorkoutTracker() {
         </div>
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+      <div className="card-bg border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Today's Log</div>
         <div className="flex gap-2 mb-3">
           <input
@@ -125,7 +125,7 @@ export default function WorkoutTracker() {
             const progress = c.steps.length > 0 ? Math.round((doneSteps / c.steps.length) * 100) : 0;
             const pc = ladder(progress);
             return (
-              <div key={c.id} className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+              <div key={c.id} className="card-bg border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-200">{c.name}</span>
                   <span className={`text-xs ${pc.cls}`}>{doneSteps}/{c.steps.length}</span>

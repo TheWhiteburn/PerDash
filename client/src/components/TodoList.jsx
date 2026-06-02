@@ -62,7 +62,7 @@ export default function TodoList() {
           return (
             <div
               key={todo.id}
-              className={`bg-[#0a0a0a] border border-white/25 rounded-lg overflow-hidden transition-all duration-300 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 ${isComplete ? 'opacity-60' : ''}`}
+              className={`card-bg border border-white/25 rounded-lg overflow-hidden transition-all duration-300 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 ${isComplete ? 'opacity-60' : ''}`}
             >
               <div
                 className="px-4 py-3 cursor-pointer"

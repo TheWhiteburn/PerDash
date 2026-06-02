@@ -35,7 +35,7 @@ export default function SleepTracker() {
     <div className="max-w-2xl mx-auto space-y-5">
       <p className="text-xs text-gray-600">Target: {target}h minimum</p>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+      <div className="card-bg border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Log Tonight's Sleep</div>
         <div className="flex gap-2">
           <input
@@ -53,17 +53,17 @@ export default function SleepTracker() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+        <div className="card-bg border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
           <div className="text-[10px] text-gray-400 tracking-wider uppercase mb-1">Weekly Average</div>
           <div className={`text-lg font-semibold ${avgColor.cls}`}>{avg}h</div>
         </div>
-        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+        <div className="card-bg border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
           <div className="text-[10px] text-gray-400 tracking-wider uppercase mb-1">Target</div>
           <div className="text-lg font-semibold text-gray-200">{target}h</div>
         </div>
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
+      <div className="card-bg border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-4">7-Day Trend</div>
         {trend.length === 0 ? (
           <span className="text-xs text-gray-600 italic">No sleep data logged yet</span>
