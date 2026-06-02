@@ -1,56 +1,39 @@
+import pg from 'pg';
+
 export default async function handler(req, res) {
+  const projectRef = 'nisidugiacjakhblmwip';
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const pool = new pg.Pool({
+    host: `db.${projectRef}.supabase.co`,
+    port: 5432,
+    database: 'postgres',
+    user: 'postgres',
+    password: secret,
+    ssl: { rejectUnauthorized: false },
+    max: 1,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 10000,
+  });
+
   try {
-    const projectRef = 'nisidugiacjakhblmwip';
-    const oidcToken = process.env.VERCEL_OIDC_TOKEN;
+    const client = await pool.connect();
 
-    const oidcRes = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/vercel-oidc-token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ oidc_token: oidcToken })
+    const before = await client.query(`SELECT relname, relrowsecurity FROM pg_class WHERE relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public') AND relkind = 'r'`);
+
+    await client.query('ALTER TABLE public.banned_emails ENABLE ROW LEVEL SECURITY');
+
+    const after = await client.query(`SELECT relname, relrowsecurity FROM pg_class WHERE relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public') AND relkind = 'r'`);
+
+    client.release();
+    await pool.end();
+
+    res.json({
+      success: true,
+      rls_before: before.rows,
+      rls_after: after.rows,
     });
-
-    if (!oidcRes.ok) {
-      const errText = await oidcRes.text();
-      return res.status(500).json({ error: 'OIDC exchange failed', status: oidcRes.status, detail: JSON.stringify(errText).slice(0, 300) });
-    }
-
-    const { access_token } = await oidcRes.json();
-
-    // First check current RLS state
-    const checkRes = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/database/query`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `SELECT c.relname, c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind = 'r';` })
-    });
-
-    if (!checkRes.ok) {
-      return res.status(500).json({ error: 'Query failed', status: checkRes.status, body: await checkRes.text().then(t => t.slice(0, 300)) });
-    }
-
-    const before = await checkRes.json();
-
-    // Enable RLS
-    const sqlRes = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/database/query`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: 'ALTER TABLE public.banned_emails ENABLE ROW LEVEL SECURITY;' })
-    });
-
-    if (!sqlRes.ok) {
-      const errText = await sqlRes.text();
-      return res.status(500).json({ error: 'ALTER TABLE failed', detail: JSON.stringify(errText).slice(0, 500) });
-    }
-
-    // Verify
-    const verifyRes = await fetch(`https://api.supabase.com/v1/projects/${projectRef}/database/query`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${access_token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: `SELECT c.relname, c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relkind = 'r';` })
-    });
-
-    const after = await verifyRes.json();
-    res.json({ success: true, rls_before: before, rls_after: after });
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    await pool.end().catch(() => {});
+    res.status(500).json({ error: e.message, code: e.code });
   }
 }
