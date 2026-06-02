@@ -68,13 +68,13 @@ function rand(n) {
 }
 
 function buildWriters() {
-  const left = Array.from({ length: 12 }, (_, i) => ({
+  const left = Array.from({ length: 14 }, (_, i) => ({
     x: 2 + Math.random() * 16,
-    y: 3 + (i + 0.5) / 12 * 88 + (Math.random() - 0.5) * 1,
+    y: 3 + (i + 0.5) / 14 * 95 + (Math.random() - 0.5) * 1,
   }));
-  const right = Array.from({ length: 13 }, (_, i) => ({
+  const right = Array.from({ length: 15 }, (_, i) => ({
     x: 78 + Math.random() * 14,
-    y: 3 + (i + 0.5) / 13 * 88 + (Math.random() - 0.5) * 1,
+    y: 3 + (i + 0.5) / 15 * 95 + (Math.random() - 0.5) * 1,
   }));
 
   return [...left, ...right].map((pos, i) => {
