@@ -60,3 +60,30 @@ export function getGoalDeadlineStatus(goal) {
   if (goal.progress > 20) return 'behind';
   return 'at-risk';
 }
+
+export function getWorkoutCalendarData(data, days = 35) {
+  const logs = data.workouts.logs;
+  const today = new Date();
+  const grid = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    grid.push({
+      date: key,
+      day: d.getDay(),
+      workedOut: logs[key] && logs[key].length > 0,
+    });
+  }
+  return grid;
+}
+
+export function getTodaySummary(data, todayKey) {
+  const sleep = data.sleep.logs[todayKey];
+  const workout = data.workouts.logs[todayKey];
+  const checklist = data.dailyChecklist.logs[todayKey];
+  const checklistDone = checklist ? checklist.filter(i => i.done).length : 0;
+  const checklistTotal = checklist ? checklist.length : 0;
+  const workoutsDone = workout ? workout.length : 0;
+  return { sleep, workoutsDone, checklistDone, checklistTotal };
+}

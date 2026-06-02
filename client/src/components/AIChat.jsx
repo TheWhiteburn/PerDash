@@ -59,6 +59,22 @@ export default function AIChat({ onClose }) {
             },
           }));
           break;
+        case 'addGoal':
+          updateData(prev => ({
+            ...prev,
+            goals: {
+              ...prev.goals,
+              [m.level]: [...prev.goals[m.level], {
+                id: `${m.level === 'yearly' ? 'y' : 'm'}-${Date.now()}`,
+                text: m.text,
+                progress: 0,
+                ...(m.level === 'yearly' ? { year: m.year || new Date().getFullYear() } : {}),
+                ...(m.level === 'monthly' ? { month: m.month || '', year: m.year || new Date().getFullYear() } : {}),
+                ...(m.parentId ? { parentId: m.parentId } : {}),
+              }],
+            },
+          }));
+          break;
         case 'addTodo':
           updateData(prev => ({
             ...prev,

@@ -19,7 +19,6 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
 
   return (
     <div>
-      <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">{title}</div>
       <div className="space-y-2">
         {goals.map(g => {
           const status = getGoalDeadlineStatus(g);
@@ -79,6 +78,13 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
 export default function Goals() {
   const { data, updateData } = useData();
   const { fiveYear, yearly, monthly } = data.goals;
+  const [tab, setTab] = useState('monthly');
+
+  const TABS = [
+    { id: 'monthly', label: 'Monthly' },
+    { id: 'yearly', label: 'Yearly' },
+    { id: 'fiveYear', label: '5-Year' },
+  ];
 
   const handleAdd = (level) => (item) => {
     updateData(prev => ({
@@ -111,29 +117,47 @@ export default function Goals() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <p className="text-xs text-gray-400">5-Year → Yearly → Monthly. Each milestone feeds the next.</p>
-      <GoalSection
-        title="5-Year Goals"
-        goals={fiveYear}
-        onAdd={handleAdd('fiveYear')}
-        onUpdate={handleUpdate('fiveYear')}
-        onDelete={handleDelete('fiveYear')}
-      />
-      <GoalSection
-        title="Yearly Goals"
-        goals={yearly}
-        onAdd={handleAdd('yearly')}
-        onUpdate={handleUpdate('yearly')}
-        onDelete={handleDelete('yearly')}
-      />
-      <GoalSection
-        title="Monthly Goals"
-        goals={monthly}
-        onAdd={handleAdd('monthly')}
-        onUpdate={handleUpdate('monthly')}
-        onDelete={handleDelete('monthly')}
-      />
+    <div className="max-w-2xl mx-auto">
+      <div className="flex gap-1 mb-5 border-b border-white/10">
+        {TABS.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`text-xs tracking-wide px-4 py-2.5 border-b-2 transition-all duration-300 ${
+              tab === t.id ? 'border-white text-white' : 'border-transparent text-gray-500 hover:text-gray-300'
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      {tab === 'monthly' && (
+        <GoalSection
+          title="Monthly goals"
+          goals={monthly}
+          onAdd={handleAdd('monthly')}
+          onUpdate={handleUpdate('monthly')}
+          onDelete={handleDelete('monthly')}
+        />
+      )}
+      {tab === 'yearly' && (
+        <GoalSection
+          title="Yearly goals"
+          goals={yearly}
+          onAdd={handleAdd('yearly')}
+          onUpdate={handleUpdate('yearly')}
+          onDelete={handleDelete('yearly')}
+        />
+      )}
+      {tab === 'fiveYear' && (
+        <GoalSection
+          title="5-Year goals"
+          goals={fiveYear}
+          onAdd={handleAdd('fiveYear')}
+          onUpdate={handleUpdate('fiveYear')}
+          onDelete={handleDelete('fiveYear')}
+        />
+      )}
     </div>
   );
 }

@@ -1,4 +1,16 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
+const MODELS = [
+  'deepseek/deepseek-v4-flash:free',
+  'stepfun/step-3-5-flash:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'meta-llama/llama-3.3-70b-instruct:free',
+];
 
 function trimContext(context) {
   if (!context) return {};
@@ -33,32 +45,31 @@ function trimContext(context) {
   };
 }
 
-async function callAI(model, systemPrompt, message, retries = 5) {
-  for (let i = 0; i < retries; i++) {
+async function callWithFallback(systemPrompt, message) {
+  let lastError = null;
+  for (const model of MODELS) {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 20000);
-      const result = await model.generateContent(
-        [{ text: systemPrompt }, { text: message }],
-        { signal: controller.signal }
-      );
+      const result = await openai.chat.completions.create({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
+        ],
+        signal: controller.signal,
+      });
       clearTimeout(timeout);
-      return result.response.text();
+      return result.choices[0].message.content;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        error.message = '503 Request timed out';
-      }
-      const isRetryable = error.message?.includes('429') || error.message?.includes('503') || error.message?.includes('quota');
-      if (isRetryable && i < retries - 1) {
-        const delays = [1000, 1000, 2000, 3000, 5000];
-        const delay = delays[Math.min(i, delays.length - 1)];
-        console.log(`API busy (attempt ${i + 1}/${retries}). Retrying in ${delay}ms...`);
-        await new Promise(r => setTimeout(r, delay));
-        continue;
-      }
-      throw error;
+      clearTimeout(lastError?.timeout);
+      lastError = { error, model };
+      console.log(`Model ${model} failed:`, error.message);
     }
   }
+  const err = lastError?.error || new Error('All models failed');
+  err.message = err.message || 'All models failed';
+  throw err;
 }
 
 function parseResponse(text) {
@@ -88,72 +99,58 @@ export default async function handler(req, res) {
   try {
     const { message, context } = req.body;
 
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
+    if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
       return res.json({
-        reply: "⚠️ Gemini API key not configured.\n\nSet `GEMINI_API_KEY` in your Vercel environment variables.",
+        reply: '⚠️ OpenRouter API key not configured.\n\nSet `OPENROUTER_API_KEY` in your Vercel environment variables.',
         mutations: [],
       });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const trimmed = trimContext(context);
 
-    const systemPrompt = `You are a relentless personal coach. NEVER suggest — TELL.
+    const systemPrompt = `You are a Coach. Short and direct.
 
 User data:
 ${JSON.stringify(trimmed)}
 
-Your job is twofold:
-1. Respond as a coach — direct, honest, motivating
-2. Update the dashboard when the user reports doing something
+Rules:
+- Short replies. Daily check: 5 words max unless planning.
+- Bold commands. "**Train legs tomorrow.**"
+- Call out laziness. "6 days no legs. Fix it."
 
-When the user tells you they did something (ran, studied, slept, worked out, made progress, etc.),
-output a JSON block with mutations AFTER your text reply, in this format:
+If user has 5-year goals with no yearly/monthly breakdown, create them. Break each 5-year goal → 1-2 yearly goals (parentId = 5-year goal id). Break each yearly → monthly goals.
+
+When user asks "how to achieve X", give phases + milestones + weekly actions. Add milestones as todos.
+
+When user reports doing something, output mutation JSON after text:
 
 \`\`\`json
 {
   "mutations": [
-    { "action": "toggleChecklist", "id": "<item id from today's checklist>" },
-    { "action": "logWorkout", "text": "description of workout" },
-    { "action": "logSleep", "hours": 7.5 },
-    { "action": "updateGoal", "level": "monthly", "id": "<goal id>", "progress": 50 },
-    { "action": "toggleChallengeStep", "challengeId": "<challenge id>", "stepId": "<step id>" },
-    { "action": "addTodo", "text": "new milestone text" },
-    { "action": "updateChecklistProgress", "id": "<preset item id>", "active": true }
+    { "action": "toggleChecklist", "id": "<id>" },
+    { "action": "logWorkout", "text": "..." },
+    { "action": "logSleep", "hours": 7 },
+    { "action": "updateGoal", "level": "yearly", "id": "<id>", "progress": 50 },
+    { "action": "addGoal", "level": "yearly", "text": "...", "year": 2026, "parentId": "<5y id>" },
+    { "action": "addGoal", "level": "monthly", "text": "...", "month": "June", "year": 2026, "parentId": "<yearly id>" },
+    { "action": "toggleChallengeStep", "challengeId": "<id>", "stepId": "<id>" },
+    { "action": "addTodo", "text": "..." },
+    { "action": "updateChecklistProgress", "id": "<id>", "active": true }
   ]
 }
 \`\`\`
 
-Available actions:
-- toggleChecklist: toggle a today's checklist item. id is mandatory. Add omit done to toggle.
-- logWorkout: log a workout entry. text is the description.
-- logSleep: log sleep hours. hours is a number.
-- updateGoal: update a goal's progress. level is "fiveYear", "yearly", or "monthly". id and progress (0-100) are mandatory.
-- toggleChallengeStep: toggle a challenge step. challengeId and stepId are mandatory.
-- addTodo: add a new milestone. text is mandatory.
-- updateChecklistProgress: toggle a preset checklist item's active state.
+No JSON if no action needed. Don't tell user to set goals they haven't made — tell them to do it.`;
 
-If the user's action doesn't clearly map to an action, just respond as a coach — no JSON needed.
-
-Rules:
-- Direct commands. "Run 5km tomorrow 6AM." not "maybe try"
-- Call out inconsistency. "3 days no workout. Fix it."
-- Celebrate wins. "AMC done. Beast."
-- Negotiate schedule if they push back, never drop the requirement.
-- Under 100 words unless deep planning needed.
-- Bold for commands.
-- If asked about goals they haven't set, tell them to set them first.`;
-
-    const raw = await callAI(model, systemPrompt, message);
+    const raw = await callWithFallback(systemPrompt, message);
     const { reply, mutations } = parseResponse(raw);
     res.json({ reply, mutations });
   } catch (error) {
     console.error('AI chat error:', error);
     const msg = error.message || '';
     let friendly = msg;
-    if (msg.includes('429') || msg.includes('quota')) friendly = 'Free tier quota exceeded. Wait a minute and try again.';
-    else if (msg.includes('503') || msg.includes('timed out')) friendly = 'Gemini is under high demand. Retrying automatically... try again in a few seconds.';
+    if (msg.includes('429') || msg.includes('quota')) friendly = 'Rate limit exceeded. Wait a minute and try again.';
+    else if (msg.includes('timed out')) friendly = 'All models timed out. Try again in a few seconds.';
     res.status(500).json({ reply: `⚠️ AI error: ${friendly}`, mutations: [] });
   }
 }

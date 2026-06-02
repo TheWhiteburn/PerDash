@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Target, ClipboardCheck, ListChecks, Dumbbell, Moon } from 'lucide-react';
+import { LayoutDashboard, Target, ClipboardCheck, ListChecks, Dumbbell, Moon, LogOut } from 'lucide-react';
 
 const TABS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
@@ -10,7 +10,7 @@ const TABS = [
   { id: 'sleep', label: 'Sleep', icon: Moon },
 ];
 
-export default function SidebarNav({ active, onSelect, mobileOpen, onMobileClose }) {
+export default function SidebarNav({ active, onSelect, mobileOpen, onMobileClose, onSignOut }) {
   const renderItems = (showLabels) => TABS.map(tab => {
     const Icon = tab.icon;
     const isActive = active === tab.id;
@@ -33,11 +33,19 @@ export default function SidebarNav({ active, onSelect, mobileOpen, onMobileClose
   return (
     <>
       {/* Desktop sidebar */}
-      <nav className="hidden md:flex w-44 bg-[#0a0a0a] border-r border-white/10 flex-col items-stretch gap-1.5 py-3 px-3 shrink-0 h-full overflow-y-auto">
+      <nav data-tour="sidebar" className="hidden md:flex w-44 bg-[#0a0a0a] border-r border-white/10 flex-col items-stretch gap-1.5 py-3 px-3 shrink-0 h-full overflow-y-auto">
         <div className="text-[10px] text-white/60 tracking-[0.2em] uppercase px-2 pb-3 pt-1 border-b border-white/10 mb-2">
           PerDash
         </div>
         {renderItems(true)}
+        <div className="flex-1" />
+        <button
+          onClick={onSignOut}
+          className="flex items-center gap-3 px-2 md:px-3 py-2.5 rounded-md text-sm text-white/50 hover:text-red-400 hover:bg-white/5 transition-all duration-300 border border-transparent mt-2"
+        >
+          <LogOut size={16} strokeWidth={1.5} />
+          <span className="text-xs tracking-wide">Sign out</span>
+        </button>
       </nav>
 
       {/* Mobile drawer overlay */}
@@ -49,6 +57,14 @@ export default function SidebarNav({ active, onSelect, mobileOpen, onMobileClose
               PerDash
             </div>
             {renderItems(true)}
+            <div className="flex-1" />
+            <button
+              onClick={onSignOut}
+              className="flex items-center gap-3 px-2 md:px-3 py-2.5 rounded-md text-sm text-white/50 hover:text-red-400 hover:bg-white/5 transition-all duration-300 border border-transparent mt-2"
+            >
+              <LogOut size={16} strokeWidth={1.5} />
+              <span className="text-xs tracking-wide">Sign out</span>
+            </button>
           </nav>
         </div>
       )}

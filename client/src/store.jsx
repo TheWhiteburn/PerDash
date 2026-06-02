@@ -1,112 +1,183 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-
-const STORAGE_KEY = 'personal-dashboard-data';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { supabase, loadLocalData, saveLocalData } from './lib/supabase';
 
 function getDefaultData() {
   return {
-    goals: {
-      fiveYear: [
-        { id: 'fy1', text: 'Career: Business running with regular income', progress: 15 },
-        { id: 'fy2', text: 'Fitness: Marathon yearly + 8K peak + leanest physique', progress: 10 },
-        { id: 'fy3', text: 'Finance: ₹2L+/month income', progress: 5 },
-        { id: 'fy4', text: 'Skills: Mountaineer, Paragliding, Rafting, Scuba certified', progress: 20 },
-      ],
-      yearly: [
-        { id: 'y1', year: 2026, text: 'Land stable job via MBA', progress: 10, parentId: 'fy3' },
-        { id: 'y2', year: 2026, text: 'Rethink The Nativs business model', progress: 5, parentId: 'fy1' },
-        { id: 'y3', year: 2026, text: 'Complete first marathon', progress: 0, parentId: 'fy2' },
-        { id: 'y4', year: 2026, text: 'AMC (Advanced Mountaineering Course)', progress: 0, parentId: 'fy4' },
-      ],
-      monthly: [
-        { id: 'm1', month: 'June', year: 2026, text: 'Build base fitness — run 3x/week', progress: 0, parentId: 'y3' },
-        { id: 'm2', month: 'June', year: 2026, text: 'Research AMC course dates & registration', progress: 0, parentId: 'y4' },
-        { id: 'm3', month: 'June', year: 2026, text: 'Polish resume & start job applications', progress: 0, parentId: 'y1' },
-      ],
-    },
-    dailyChecklist: {
-      presets: [
-        { id: 'pc1', text: 'Sleep minimum 6 hours', active: true },
-        { id: 'pc2', text: 'Eat healthy — no junk', active: true },
-        { id: 'pc3', text: 'Workout / run', active: true },
-        { id: 'pc4', text: 'MBA study 1 hour', active: true },
-      ],
-      logs: {},
-    },
-    todos: [
-      { id: 't1', text: 'Advanced Mountaineering Course (AMC)', progress: 0, notes: '', createdAt: new Date().toISOString() },
-      { id: 't2', text: 'Search & Rescue course', progress: 0, notes: '', createdAt: new Date().toISOString() },
-      { id: 't3', text: 'Scuba certification', progress: 0, notes: '', createdAt: new Date().toISOString() },
-      { id: 't4', text: 'Paragliding certification', progress: 0, notes: '', createdAt: new Date().toISOString() },
-    ],
-    workouts: {
-      logs: {},
-      challenges: [
-        {
-          id: 'ch1', name: 'Unlock Muscle Up', active: true,
-          steps: [
-            { id: 'ch1s1', text: '3x8 Pull-ups', done: false },
-            { id: 'ch1s2', text: '3x5 Chest-to-bar Pull-ups', done: false },
-            { id: 'ch1s3', text: 'Negative Muscle-ups 3x3', done: false },
-            { id: 'ch1s4', text: 'Banded Muscle-up 3x1', done: false },
-            { id: 'ch1s5', text: 'Full Muscle-up — UNLOCKED', done: false },
-          ],
-        },
-        {
-          id: 'ch2', name: '10k Under 5:30/km', active: true,
-          steps: [
-            { id: 'ch2s1', text: 'Run 5km at 6:00/km pace', done: false },
-            { id: 'ch2s2', text: 'Run 8km at 5:45/km pace', done: false },
-            { id: 'ch2s3', text: 'Run 10km at 5:30/km pace', done: false },
-            { id: 'ch2s4', text: 'Run 10km under 5:30/km — UNLOCKED', done: false },
-          ],
-        },
-      ],
-    },
-    sleep: {
-      logs: {},
-    },
-    settings: {
-      sleepTarget: 6,
-      installDate: new Date().toISOString(),
-    },
+    profile: { name: '', age: '', gender: '' },
+    goals: { fiveYear: [], yearly: [], monthly: [] },
+    dailyChecklist: { presets: [], logs: {} },
+    todos: [],
+    workouts: { logs: {}, challenges: [] },
+    sleep: { logs: {} },
+    settings: { sleepTarget: 8, installDate: new Date().toISOString() },
   };
 }
 
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      const defaults = getDefaultData();
-      return { ...defaults, ...parsed, goals: { ...defaults.goals, ...parsed.goals } };
-    }
-  } catch (e) {
-    console.error('Failed to load data:', e);
-  }
-  return getDefaultData();
-}
-
-function saveData(data) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) {
-    console.error('Failed to save data:', e);
-  }
+function mergeDefaults(cloudData) {
+  const defaults = getDefaultData();
+  return { ...defaults, ...cloudData, goals: { ...defaults.goals, ...cloudData.goals }, profile: { ...defaults.profile, ...cloudData.profile } };
 }
 
 const DataContext = createContext(null);
 
 export function DataProvider({ children }) {
-  const [data, setData] = useState(loadData);
+  const [data, setData] = useState(getDefaultData);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const syncTimerRef = useRef(null);
+
+  async function loadCloudData(userId) {
+    try {
+      const { data: row } = await supabase
+        .from('user_data')
+        .select('data')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (row) {
+        const merged = mergeDefaults(row.data);
+        setData(merged);
+        if (!merged.profile?.name) {
+          setShowOnboarding(true);
+          setSyncing(false);
+          setLoading(false);
+          return;
+        }
+      } else {
+        const local = loadLocalData();
+        if (local) {
+          setData(mergeDefaults(local));
+        } else {
+          setShowOnboarding(true);
+          setSyncing(false);
+          setLoading(false);
+          return;
+        }
+        await supabase.from('user_data').upsert({ user_id: userId, data: local || getDefaultData() }, { onConflict: 'user_id' });
+      }
+    } catch (e) {
+      console.error('Supabase load failed, falling back to localStorage:', e);
+      const local = loadLocalData();
+      if (local) {
+        setData(mergeDefaults(local));
+      } else {
+        setShowOnboarding(true);
+        setSyncing(false);
+        setLoading(false);
+        return;
+      }
+    }
+    setSyncing(false);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    saveData(data);
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      if (s) {
+        setSession(s);
+        loadCloudData(s.user.id);
+      } else {
+        const local = loadLocalData();
+        if (local) setData(mergeDefaults(local));
+        setSyncing(false);
+        setLoading(false);
+      }
+    }).catch(e => {
+      console.error('getSession error:', e);
+      const local = loadLocalData();
+      if (local) setData(mergeDefaults(local));
+      setSyncing(false);
+      setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
+      if (event === 'SIGNED_IN') {
+        setSession(s);
+        loadCloudData(s.user.id);
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setShowOnboarding(false);
+        const local = loadLocalData();
+        if (local) setData(mergeDefaults(local));
+        setSyncing(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    saveLocalData(data);
   }, [data]);
+
+  // Safety net: if user is logged in, done loading, but has no profile name → show onboarding
+  useEffect(() => {
+    if (!syncing && !loading && session && data && !data.profile?.name) {
+      setShowOnboarding(true);
+    }
+  }, [data, syncing, loading, session]);
+
+  const syncToCloud = useCallback(async (dataToSync) => {
+    if (!session) return;
+    try {
+      await supabase.from('user_data').upsert({ user_id: session.user.id, data: dataToSync }, { onConflict: 'user_id' });
+    } catch (e) {
+      console.error('syncToCloud:', e);
+    }
+  }, [session]);
+
+  // Debounced cloud sync
+  useEffect(() => {
+    if (!session || syncing) return;
+    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+    syncTimerRef.current = setTimeout(() => syncToCloud(data), 2000);
+    return () => { if (syncTimerRef.current) clearTimeout(syncTimerRef.current); };
+  }, [data, session, syncing, syncToCloud]);
+
+  const finishOnboarding = useCallback(async (onboardingData) => {
+    let merged;
+    setData(prev => {
+      merged = {
+        ...prev,
+        profile: { ...prev.profile, ...onboardingData.profile },
+        dailyChecklist: { ...prev.dailyChecklist, ...onboardingData.dailyChecklist },
+        goals: { ...prev.goals, fiveYear: [...prev.goals.fiveYear, ...(onboardingData.goals?.fiveYear || [])] },
+        settings: { ...prev.settings, ...onboardingData.settings },
+      };
+      return merged;
+    });
+    setShowOnboarding(false);
+    saveLocalData(merged);
+    if (session) {
+      await supabase.from('user_data').upsert({ user_id: session.user.id, data: merged }, { onConflict: 'user_id' });
+    }
+  }, [session]);
+
+  const signIn = useCallback(async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }, []);
+
+  const signUp = useCallback(async (email, password) => {
+    const { data: banned, error: banError } = await supabase.rpc('is_email_banned', { check_email: email });
+    if (banError) throw banError;
+    if (banned) throw new Error('This email is banned. Contact support.');
+    const { data: exists, error: checkErr } = await supabase.rpc('is_email_registered', { check_email: email });
+    if (checkErr) throw checkErr;
+    if (exists) throw new Error('Email already in use.');
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+  }, []);
+
+  const signOut = useCallback(() => {
+    supabase.auth.signOut();
+  }, []);
 
   const updateData = useCallback((updater) => {
     setData(prev => {
       const next = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
-      saveData(next);
       return next;
     });
   }, []);
@@ -120,90 +191,44 @@ export function DataProvider({ children }) {
     const todayKey = getTodayKey();
     const log = data.dailyChecklist.logs[todayKey];
     if (log) return log;
-    const items = data.dailyChecklist.presets.filter(p => p.active).map(p => ({
-      id: p.id,
-      text: p.text,
-      done: false,
-    }));
-    return items;
+    return data.dailyChecklist.presets.filter(p => p.active).map(p => ({ id: p.id, text: p.text, done: false }));
   }, [data.dailyChecklist, getTodayKey]);
 
   const setTodayChecklist = useCallback((items) => {
     const todayKey = getTodayKey();
-    updateData(prev => ({
-      ...prev,
-      dailyChecklist: {
-        ...prev.dailyChecklist,
-        logs: {
-          ...prev.dailyChecklist.logs,
-          [todayKey]: items,
-        },
-      },
-    }));
+    updateData(prev => ({ ...prev, dailyChecklist: { ...prev.dailyChecklist, logs: { ...prev.dailyChecklist.logs, [todayKey]: items } } }));
   }, [getTodayKey, updateData]);
 
   const getTodayWorkout = useCallback(() => {
-    const todayKey = getTodayKey();
-    return data.workouts.logs[todayKey] || [];
+    return data.workouts.logs[getTodayKey()] || [];
   }, [data.workouts.logs, getTodayKey]);
 
   const logWorkout = useCallback((entry) => {
     const todayKey = getTodayKey();
     updateData(prev => {
       const today = prev.workouts.logs[todayKey] || [];
-      return {
-        ...prev,
-        workouts: {
-          ...prev.workouts,
-          logs: {
-            ...prev.workouts.logs,
-            [todayKey]: [...today, { id: Date.now().toString(), ...entry }],
-          },
-        },
-      };
+      return { ...prev, workouts: { ...prev.workouts, logs: { ...prev.workouts.logs, [todayKey]: [...today, { id: Date.now().toString(), ...entry }] } } };
     });
   }, [getTodayKey, updateData]);
 
   const logSleep = useCallback((hours) => {
     const todayKey = getTodayKey();
-    updateData(prev => ({
-      ...prev,
-      sleep: {
-        ...prev.sleep,
-        logs: {
-          ...prev.sleep.logs,
-          [todayKey]: hours,
-        },
-      },
-    }));
+    updateData(prev => ({ ...prev, sleep: { ...prev.sleep, logs: { ...prev.sleep.logs, [todayKey]: hours } } }));
   }, [getTodayKey, updateData]);
 
-  const exportData = useCallback(() => {
-    return data;
-  }, [data]);
+  const exportData = useCallback(() => data, [data]);
 
-  const importData = useCallback((newData) => {
-    setData(newData);
-  }, []);
+  const importData = useCallback((newData) => { setData(newData); }, []);
 
   const value = {
-    data,
-    updateData,
-    getTodayChecklist,
-    setTodayChecklist,
-    getTodayWorkout,
-    logWorkout,
-    logSleep,
-    exportData,
-    importData,
-    getTodayKey,
+    data, session, loading, syncing,
+    showOnboarding, finishOnboarding,
+    signIn, signUp, signOut,
+    updateData, getTodayChecklist, setTodayChecklist,
+    getTodayWorkout, logWorkout, logSleep, exportData, importData, getTodayKey,
   };
 
-  return (
-    <DataContext.Provider value={value}>
-      {children}
-    </DataContext.Provider>
-  );
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 }
 
 export function useData() {
