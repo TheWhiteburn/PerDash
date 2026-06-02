@@ -29,7 +29,7 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
           return (
             <div
               key={g.id}
-              className={`bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200 ${isCompleted ? 'opacity-60' : ''}`}
+              className={`bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300 ${isCompleted ? 'opacity-60' : ''}`}
             >
               <div className="flex items-start justify-between gap-3 mb-3">
                 <span className={`text-sm flex-1 ${isCompleted ? 'line-through text-gray-600' : 'text-gray-200'}`}>
@@ -68,11 +68,8 @@ function GoalSection({ title, goals, onAdd, onUpdate, onDelete }) {
           onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
           className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
-        <button onClick={handleAdd} className="group relative overflow-hidden px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200">
-          <span className="relative">
-            <span className="relative z-10">+ Add</span>
-            <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-          </span>
+        <button onClick={handleAdd} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300">
+          + Add
         </button>
       </div>
     </div>

@@ -50,11 +50,8 @@ export default function TodoList() {
           onKeyDown={(e) => e.key === 'Enter' && addTodo()}
           className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors"
         />
-        <button onClick={addTodo} className="group relative overflow-hidden px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200">
-          <span className="relative">
-            <span className="relative z-10">+ Add</span>
-            <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-          </span>
+        <button onClick={addTodo} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300">
+          + Add
         </button>
       </div>
 
@@ -65,7 +62,7 @@ export default function TodoList() {
           return (
             <div
               key={todo.id}
-              className={`bg-[#0a0a0a] border border-white/25 rounded-lg overflow-hidden transition-all duration-200 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 ${isComplete ? 'opacity-60' : ''}`}
+              className={`bg-[#0a0a0a] border border-white/25 rounded-lg overflow-hidden transition-all duration-300 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 ${isComplete ? 'opacity-60' : ''}`}
             >
               <div
                 className="px-4 py-3 cursor-pointer"

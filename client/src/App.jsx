@@ -44,32 +44,23 @@ function Dashboard() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setChatOpen(true)}
-              className="group relative overflow-hidden px-3 py-1.5 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200 tracking-wide"
+              className="px-3 py-1.5 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300 tracking-wide"
             >
-              <span className="relative">
-                <span className="relative z-10">Coach</span>
-                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-              </span>
+              Coach
             </button>
             <button
               onClick={handleExport}
-              className="group relative overflow-hidden px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200"
+              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300"
               title="Export backup"
             >
-              <span className="relative">
-                <span className="relative z-10">↓ Export</span>
-                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-              </span>
+              ↓ Export
             </button>
             <button
               onClick={handleImport}
-              className="group relative overflow-hidden px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200"
+              className="px-3 py-1.5 text-xs leading-none bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300"
               title="Import backup"
             >
-              <span className="relative">
-                <span className="relative z-10">↑ Import</span>
-                <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-              </span>
+              ↑ Import
             </button>
           </div>
         </header>

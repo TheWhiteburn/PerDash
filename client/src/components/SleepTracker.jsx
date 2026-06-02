@@ -35,7 +35,7 @@ export default function SleepTracker() {
     <div className="max-w-2xl mx-auto space-y-5">
       <p className="text-xs text-gray-600">Target: {target}h minimum</p>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-3">Log Tonight's Sleep</div>
         <div className="flex gap-2">
           <input
@@ -45,28 +45,25 @@ export default function SleepTracker() {
             onKeyDown={(e) => e.key === 'Enter' && handleLog()}
             className="flex-1 bg-black border border-white/25 rounded-md px-3 py-2 text-sm text-gray-200 placeholder-gray-600 outline-none focus:border-gray-400 transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           />
-          <button onClick={handleLog} className="group relative overflow-hidden px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-100 hover:-translate-y-0.5 transition-all duration-200">
-            <span className="relative">
-              <span className="relative z-10">Log</span>
-              <span className="absolute inset-0 bg-black/8 rounded-sm scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left pointer-events-none" />
-            </span>
+          <button onClick={handleLog} className="px-3 py-2 text-xs bg-white text-gray-900 rounded-md hover:bg-gray-900 hover:text-white hover:-translate-y-1 transition-all duration-300">
+            Log
           </button>
         </div>
         {todaySleep && <div className="text-xs text-gray-400 mt-2">Today: {todaySleep}h logged</div>}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
+        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
           <div className="text-[10px] text-gray-400 tracking-wider uppercase mb-1">Weekly Average</div>
           <div className={`text-lg font-semibold ${avgColor.cls}`}>{avg}h</div>
         </div>
-        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
+        <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-4 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
           <div className="text-[10px] text-gray-400 tracking-wider uppercase mb-1">Target</div>
           <div className="text-lg font-semibold text-gray-200">{target}h</div>
         </div>
       </div>
 
-      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-0.5 hover:border-white/35 transition-all duration-200">
+      <div className="bg-[#0a0a0a] border border-white/25 rounded-lg p-5 shadow-card-white hover:-translate-y-1 hover:shadow-[-8px_8px_28px_rgba(255,255,255,0.2)] hover:border-white/50 transition-all duration-300">
         <div className="text-xs text-gray-400 tracking-wider uppercase mb-4">7-Day Trend</div>
         {trend.length === 0 ? (
           <span className="text-xs text-gray-600 italic">No sleep data logged yet</span>
