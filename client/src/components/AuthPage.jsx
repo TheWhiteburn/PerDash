@@ -30,7 +30,9 @@ function buildWriters() {
     charIndex: 0,
     phase: 'typing',
     frame: 0,
-    typeThreshold: 3,
+    typeThreshold: 3 + Math.floor(Math.random() * 4),
+    holdCounter: 0,
+    holdDuration: 60 + Math.floor(Math.random() * 90),
     typeCounter: 0,
     fontSize: (13 + Math.random() * 5).toFixed(1),
     opacity: (0.28 + Math.random() * 0.05).toFixed(3),
@@ -59,7 +61,25 @@ export default function AuthPage({ onSignIn, onSignUp }) {
             w.typeCounter = 0;
             w.charIndex++;
             w.typed = w.phrase.slice(0, w.charIndex);
-            if (w.charIndex >= w.phrase.length) w.phase = 'done';
+            if (w.charIndex >= w.phrase.length) {
+              w.phase = 'hold';
+              w.holdCounter = 0;
+            }
+          }
+        } else if (w.phase === 'hold') {
+          w.holdCounter++;
+          if (w.holdCounter >= w.holdDuration) {
+            w.phase = 'backspacing';
+          }
+        } else if (w.phase === 'backspacing') {
+          w.typeCounter++;
+          if (w.typeCounter >= w.typeThreshold && w.charIndex > 0) {
+            w.typeCounter = 0;
+            w.charIndex--;
+            w.typed = w.phrase.slice(0, w.charIndex);
+            if (w.charIndex <= 0) {
+              w.phase = 'typing';
+            }
           }
         }
       }
