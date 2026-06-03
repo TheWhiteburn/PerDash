@@ -6,6 +6,10 @@ const phrases = [
   'focus on what you control', 'master your mind',
   'discipline equals freedom', 'lock in', 'do the work',
   'consistency over intensity', 'no zero days',
+  'embrace the grind', 'stay hungry', 'actions over words',
+  'fortune favors the bold', 'rise and grind',
+  'slow is smooth', 'done is better than perfect',
+  'trust the process', 'keep showing up', 'one day at a time',
 ];
 
 function buildWriters() {
@@ -21,18 +25,20 @@ function buildWriters() {
       minDistY = Math.max(6, minDistY - 1);
     }
   }
+  const shuffled = [...phrases].sort(() => Math.random() - 0.5);
   return positions.map((p, i) => ({
     id: i,
     x: p.x.toFixed(2),
     y: p.y.toFixed(2),
-    phrase: phrases[i % phrases.length],
+    phrase: shuffled[i % shuffled.length],
     typed: '',
     charIndex: 0,
     phase: 'typing',
     frame: 0,
-    typeThreshold: 3 + Math.floor(Math.random() * 4),
+    typeThreshold: 2 + Math.floor(Math.random() * 6),
+    backspaceThreshold: 1 + Math.floor(Math.random() * 4),
     holdCounter: 0,
-    holdDuration: 60 + Math.floor(Math.random() * 90),
+    holdDuration: 40 + Math.floor(Math.random() * 120),
     typeCounter: 0,
     fontSize: (13 + Math.random() * 5).toFixed(1),
     opacity: (0.28 + Math.random() * 0.05).toFixed(3),
@@ -73,7 +79,7 @@ export default function AuthPage({ onSignIn, onSignUp }) {
           }
         } else if (w.phase === 'backspacing') {
           w.typeCounter++;
-          if (w.typeCounter >= w.typeThreshold && w.charIndex > 0) {
+          if (w.typeCounter >= w.backspaceThreshold && w.charIndex > 0) {
             w.typeCounter = 0;
             w.charIndex--;
             w.typed = w.phrase.slice(0, w.charIndex);
